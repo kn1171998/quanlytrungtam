@@ -1,0 +1,397 @@
+﻿@model List<TrungTam.Areas.Admin.Abstracts.HS_CongNo>
+
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+    var list_lop = (List<TrungTam.Areas.Admin.Models.LOP_HOC>)ViewBag.list_lop;
+    var Kiemtra = ViewBag.Kiemtra;
+    var KiemTraChuaHD = ViewBag.kiemtraChuaHD;
+    var nam = DateTime.Now.Year;
+    var thang = DateTime.Now.Month;
+}
+
+<h2 class="Title_Content">Tính học phí</h2>
+
+@*<p>
+        @Html.ActionLink("Create New", "Create")
+    </p>*@
+<div class="container">
+    <div class="row">
+        <div class="col-6 m-0">
+            <div id="tenlop">
+                @if (KiemTraChuaHD != 0 && KiemTraChuaHD != -1)
+                {
+                    if (Model != null && Kiemtra != 0 && Kiemtra != -1)
+                    {
+                        var dem = 0;
+                        foreach (var i in Model)
+                        {
+                            if (dem == 0)
+                            {
+                                @*<div class="" id="tenlopvalue" style="color:black;">
+                                        <span class="text-white bg-primary p-2 mr-2 border-radius-5%">Tên lớp: </span> <label class="m-2">  @i.tenlop</label>
+                                    </div>*@
+                                <div class="input-group mb-3 w-100" id="tenlopvalue">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-primary text-white" id="basic-addon1">Tên Lớp</span>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="@i.tenlop">
+                                </div>
+                                dem++;
+                            }
+                        }
+                    }
+                }
+            </div>
+        </div>
+        <div class="col-6">@Html.AntiForgeryToken();</div>
+       
+    </div>
+
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-sm-10 mb-3">
+            @if (KiemTraChuaHD != 0 && KiemTraChuaHD != -1)
+            {
+                if (Kiemtra != 0 && Kiemtra != -1)
+                {
+                    <select class="custom-select" name="lop" id="lop">
+                        @foreach (var i in list_lop)
+                        {
+                            <option value="@i.MA_LOP">@i.TEN_LOP</option>
+                        }
+                    </select>
+                }
+            }
+
+        </div>
+        <div class="col-lg-3 col-sm-6 col-md-6">
+            <button type="button" class="btn btn-info w-50 m-sm-2 m-lg-0 mb-md-3" id="loc">Lọc</button>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn tháng</label>
+        </div>
+        <select class="custom-select" name="thang" id="thang">
+            @*<option value="0"> Chọn tháng cần tính lương </option>*@
+            @for (int item = 1; item < 13; item++)
+            {
+                if (item == thang)
+                {
+                    <option selected value="@item"> @item </option>
+                }
+                else
+                {
+                    <option value="@item"> @item </option>
+                }
+            }
+        </select>
+        <div class="input-group-prepend">
+            <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn năm</label>
+            <select class="custom-select" name="nam" id="nam">
+                <option value="@nam">@nam </option>
+
+                @for (int item = 2019; item < nam; item++)
+                {
+                    <option value="@item"> @item </option>
+                }
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="mb-3 row" id="report" style="text-align:right; ">
+        <div class="col-lg-10 col-md-5 col-sm-9 "><label class="text-white bg-primary p-2 pl-lg-3 ">Học sinh đã đóng:</label></div>
+        <div class="col-lg-1 col-md-3 col-sm-3"><lable class="text-danger">@ViewBag.DaThanhToan</lable></div>
+        <div class="col-lg-10 col-md-5  col-sm-9"><label class="text-white bg-primary p-2">Tiền đã thu của lớp:</label></div>
+        <div class="col-lg-1 col-md-3 col-sm-3"><label class="text-danger text-center">@string.Format("{0:0,0}", ViewBag.TongTien)</label></div>
+    </div>
+</div>
+
+
+
+
+<div id="kiemtra">
+    @if ((Kiemtra == 0 || KiemTraChuaHD == 0) && (Kiemtra != -1 && KiemTraChuaHD != -1))
+    {
+        <div> Bạn chưa tạo công nợ tháng mới</div>
+        <button type="button" class="btn btn-danger" id="taocongno">Tạo công nợ</button>
+    }
+</div>
+
+
+<div class="container table-responsive">
+    <table class="table table-bordered table-responsive table-hover table-responsive">
+        <thead class="text-white bg-primary text-center">
+            <tr>
+                <th>
+                    Mã học viên
+                </th>
+                <th>
+                    Họ tên
+                </th>
+                <th>
+                    Ngày sinh
+                </th>
+                <th>
+                    Giới tính
+                </th>
+                <th>
+                    SDT
+                </th>
+                <th>Đơn giá</th>
+                <th>Trạng thái</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="list">
+            @if (Model != null && Kiemtra != 0)
+            {
+                foreach (var i in Model)
+                {
+                    <tr>
+                        <td><input type="hidden" name="mahs" id="mahs" value="@i.mahs" />@i.mahs</td>
+
+                        <td><input type="hidden" name="macn" id="macn" value="@i.macongno" />@i.hoten</td>
+
+                        <td>@i.ngaysinh</td>
+
+                        <td>@i.gioitinh</td>
+
+                        <td>@i.sdt</td>
+
+                        <td>@string.Format("{0:0,0}", i.dongia)</td>
+                        @if (@i.trangthaihd)
+                        {
+                            <td><button class="btn btn-success" disabled>Đã thanh toán</button></td>
+                            <td>
+                                <button type="button" class="btn btn-warning inhoadon" id="inhoadon">In hoá đơn</button>
+                            </td>
+                        }
+                        else
+                        {
+                            <td><button class="btn btn-danger" disabled>Chưa thanh toán</button></td>
+                            <td>
+                                <button type="button" class="btn btn-outline-danger chitiet" id="chitiet">Chi tiết học phí</button>
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+@section ClientScript{
+    <script>
+        $('#taocongno').click(function () {
+            var token = $("[name='__RequestVerificationToken']").val();
+            $("#taocongno").attr("disabled", true);
+            $.ajax({
+                url: "/CONG_NO/CreateCongNo",
+                data: {__RequestVerificationToken: token},
+                type: "POST",
+                success: function (res) {
+                    bootbox.alert({
+                        message: "Thành công",
+                        callback: function () {
+                             location.href = '@Url.Action("Index", "CONG_NO")';
+                        }
+                    });
+                },
+                error: function () {
+                    bootbox.alert("Không thành công");
+                }
+            })
+        });
+
+        $('#lop').change(function () {
+            //function convertDate(inputFormat) {
+            //  function pad(s) { return (s < 10) ? '0' + s : s; }
+            //  var d = new Date(inputFormat);
+            //  return [pad(d.getDate()), pad(d.getMonth()+1), d.getFullYear()].join('/');
+            //}
+                  var thang = $('#thang').val();
+            var nam = $('#nam').val();
+            var date1 = thang + '_' + nam;
+                //var dateloc = convertDate(temp);
+                var malop1 = $('#lop').val() + '_' + date1;
+                $.ajax({
+                    url: "/CONG_NO/Index1",
+                    data: { lop: malop1 },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $('tbody#list').html("");
+                        $(response).each(function (i, e) { //duyet mang doi tuong
+                            $('#tenlopvalue').remove();
+                            var tenlop1 = '<div class="col-sm-3" id="tenlopvalue" style="color:black;"><span>Tên lớp:</span>' + e.tenlop + '</div>';
+                            $('#tenlop').append(tenlop1);
+                            var tr = $("<tr/>");
+                            $("<td/>").html('<input type = "hidden" name="mahs" id = "mahs" value = "' + e.mahs + '"/>' + e.mahs).appendTo(tr);
+                            $("<td/>").html('<input type="hidden" name="macn" id="macn" value="' + e.macongno + '"/>' + e.hoten).appendTo(tr);
+                            $("<td/>").html(e.ngaysinh).appendTo(tr);
+                            $("<td/>").html(e.gioitinh).appendTo(tr);
+                            $("<td/>").html(e.sdt).appendTo(tr);
+                            $("<td/>").html(e.dongia).appendTo(tr);
+                            //$("<td/>").html(e.trangthaihd).appendTo(tr);
+                            if (e.trangthaihd) {
+                                $("<td/>").html('<td><button class="btn btn-success" disabled>Đã thanh toán</button></td>' +
+                                    '<td>'
+                                    + '<button type="button" class="btn btn-warning inhoadon" id="inhoadon">In hoá đơn</button>' +
+                                    '</td>').appendTo(tr);
+                            }
+                            else {
+                                $("<td/>").html('<td><button class="btn btn-danger" disabled>Chưa thanh toán</button></td>' +
+                                    '<td>'
+                                    + ' <button type="button" class="btn btn-success chitiet" id="chitiet">Chi tiết học phí</button>' +
+                                    '</td>').appendTo(tr);
+                            }
+                            //$("<td/>").html('<button type="button" class="btn btn-success chitiet" id="chitiet">Chi tiết học phí</button>').appendTo(tr);
+                            $('#list').append(tr);
+                             $('#report').html('');
+                            @*$('<div/>').html("<div>Tổng tiền cần thu: " + e.dadong + " </div>").appendTo($('#report'));
+                            $('<div/>').html("<div>Học sinh đã đóng: @ViewBag.DaThanhToan").appendTo($('#report'));
+                            $('<div/>').html("<div>Tiền đã thu của lớp:@if (ViewBag.TongTien != 0) { string.Format("{0:0,0}", @ViewBag.TongTien); }</div>").appendTo($('#report'));*@
+                            $('#report').html('');
+                            $('<div/>').html('<div class="container">').appendTo($('#report'));
+                            $('<div/>').html('<div class="mb-3 row" id="report" style="text-align:right;">').appendTo($('#report'));
+                            $('<div/>').html('<div class="col-lg-10 col-md-5 col-sm-9"><label class="text-white bg-primary p-2 pl-lg-3">Tổng tiền cần thu: </label></div>').appendTo($('#report'));
+                            $('<div/>').html("<div class='col-lg-10 col-md-5 col-sm-9'><lable class='text-danger'>" + e.dadong + "</label></div>").appendTo($('#report'));
+                            $('<div/>').html('<div class="col-lg-10 col-md-5 col-sm-9"><label class="text-white bg-primary p-2 pl-lg-3">Học sinh đã đóng:</label></div>').appendTo($('#report'));
+                            $('<div/>').html("<div class='col-lg-1 col-md-3 col-sm-3'><lable class='text-danger'>"+e.hsdong+"</label></div>").appendTo($('#report'));
+                            $('<div/>').html('<div class="col-lg-10 col-md-5  col-sm-9"><label class="text-white bg-primary p-2">Tiền đã thu của lớp:</label></div>').appendTo($('#report'));
+                            $('<div/>').html("<div class='col-lg-1 col-md-3 col-sm-3'><label class='text-danger text-center'>"+e.tiendathu+"</label></div>").appendTo($('#report'));
+                        });
+                    }
+                });
+        });
+        $('table tbody').on('click', 'button.chitiet', function () {
+              var token = $("[name='__RequestVerificationToken']").val();
+            var mahs = $(this).closest('tr').find('input[name="mahs"]').val();
+            var macn = $(this).closest('tr').find('input[name="macn"]').val();
+            location.href = '@Url.Action("Details", "CONG_NO")?id=' + mahs + '&cn='+macn;
+            $.ajax({
+                type: 'GET',
+                url: '/Admin/CONG_NO/Detail',
+                dataType: 'JSON',
+                traditional: true,
+                data: {
+                    ab: mahs,
+                    macn: macn
+                },
+                contentType: "application/json; chartset=utf-8",
+                success: function (response) {
+                }
+            });
+        });
+        $('table tbody').on('click', 'button.inhoadon', function () {
+            var mahs = $(this).closest('tr').find('input[name="mahs"]').val();
+            var macn = $(this).closest('tr').find('input[name="macn"]').val();
+            @*location.href = '@Url.Action("PrintPayment", "CONG_NO")?id=' + mahs + '&cn='+macn;*@
+             var redirectwindow = window.open('@Url.Action("PrintPayment","CONG_NO")?id=' + mahs + '&cn=' + macn, '_blank');
+            redirectwindow.location;
+            //$.ajax({
+            //    type: 'GET',
+            //    url: '/Admin/CONG_NO/PrintPayment',
+            //    dataType: 'JSON',
+            //    traditional: true,
+            //    data: {
+            //        id: mahs,
+            //        cn: macn
+            //    },
+            //    contentType: "application/json; chartset=utf-8",
+            //    success: function (response) {
+            //    }
+            //});
+        });
+
+        $('#loc').click(function () {
+            //function convertDate(inputFormat) {
+            //  function pad(s) { return (s < 10) ? '0' + s : s; }
+            //  var d = new Date(inputFormat);
+            //  return [pad(d.getDate()), pad(d.getMonth()+1), d.getFullYear()].join('/');
+            //}
+            var malop1 = $('#lop').val();
+                     var thang = $('#thang').val();
+            var nam = $('#nam').val();
+            var date1 = thang + '_' + nam;
+                var vcl = malop1 + '_' + date1;
+                //console.log(dateloc);
+                $.ajax({
+                    url: "/Admin/CONG_NO/Filter1",
+                    type: "GET",
+                    dataType: 'JSON',
+                    contentType: "application/json; chartset=utf-8",
+                    traditional: true,
+                    data: {
+                        id: vcl
+                    },
+                    success: function (response) {
+                        $('tbody#list').html("");
+                        $(response).each(function (i, e) { //duyet mang doi tuong
+                            $('#tenlopvalue').remove();
+                            var tenlop1 = '<div class="col-sm-3" id="tenlopvalue" style="color:black;"><span>Tên lớp: </span>' + e.tenlop + '</div>';
+                            $('#tenlop').append(tenlop1);
+                            var tr = $("<tr/>");
+                            $("<td/>").html('<input type = "hidden" name="mahs" id = "mahs" value = "' + e.mahs + '"/>' + e.mahs).appendTo(tr);
+                            $("<td/>").html('<input type="hidden" name="macn" id="macn" value="' + e.macongno + '"/>' + e.hoten).appendTo(tr);
+                            $("<td/>").html(e.ngaysinh).appendTo(tr);
+                            $("<td/>").html(e.gioitinh).appendTo(tr);
+                            $("<td/>").html(e.sdt).appendTo(tr);
+                            $("<td/>").html(e.dongia).appendTo(tr);
+                            //$("<td/>").html(e.trangthaihd).appendTo(tr);
+                            if (e.trangthaihd) {
+                                $("<td/>").html('<td><button class="btn btn-success" disabled>Đã thanh toán</button></td>' +
+                                    '<td>'
+                                    + '<button type="button" class="btn btn-success inhoadon" id="inhoadon">In hoá đơn</button>' +
+                                    '</td>').appendTo(tr);
+                            }
+                            else {
+                                $("<td/>").html('<td><button class="btn btn-danger" disabled>Chưa thanh toán</button></td>' +
+                                    '<td>'
+                                    + ' <button type="button" class="btn btn-success chitiet" id="chitiet">Chi tiết học phí</button>' +
+                                    '</td>').appendTo(tr);
+                            }
+                            //$("<td/>").html('<button type="button" class="btn btn-success chitiet" id="chitiet">Chi tiết học phí</button>').appendTo(tr);
+                            $('#list').append(tr);
+                            $('#report').html('');
+                            $('<div/>').html('<div class="container">').appendTo($('#report'));
+                            $('<div/>').html('<div class="mb-3 row" id="report" style="text-align:right;">').appendTo($('#report'));
+                           if (e.dadong == null) {
+                                e.dadong = 0;
+                            }
+                            if (e.hsdong == null) {
+                                e.hsdong = 0;
+                            }
+                            if (e.tiendathu == null) {
+                                e.tiendathu = 0;
+                            }
+                            $('<div/>').html('<div class="col-lg-10 col-md-5 col-sm-9"><label class="text-white bg-primary p-2 ">Tổng tiền cần thu: </label></div>').appendTo($('#report'));
+                            $('<div/>').html("<div class='col-lg-10 col-md-5 col-sm-9'><lable class='text-danger'>" + e.dadong + "</label></div>").appendTo($('#report'));
+                            $('<div/>').html('<div class="col-lg-10 col-md-5 col-sm-9"><label class="text-white bg-primary p-2 pl-lg-3">Học sinh đã đóng:</label></div>').appendTo($('#report'));
+                            $('<div/>').html("<div class='col-lg-1 col-md-3 col-sm-3'><lable class='text-danger'>"+e.hsdong+"</label></div>").appendTo($('#report'));
+                            $('<div/>').html('<div class="col-lg-10 col-md-5  col-sm-9"><label class="text-white bg-primary p-2">Tiền đã thu của lớp:</label></div>').appendTo($('#report'));
+                            $('<div/>').html("<div class='col-lg-1 col-md-3 col-sm-3'><label class='text-danger text-center'>"+e.tiendathu+"</label></div>").appendTo($('#report'));
+                            //$('#report').appendTo()
+                        });
+                    }
+                })
+        });
+    </script>
+}

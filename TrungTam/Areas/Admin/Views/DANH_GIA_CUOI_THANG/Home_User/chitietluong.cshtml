@@ -1,0 +1,180 @@
+﻿
+@{
+    ViewBag.Title = "Chitietluong";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('2'))
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout_gv.cshtml";
+    }
+    var chitietfull = (List<TrungTam.Areas.Admin.Abstracts.TINH_LUONG>)ViewBag.chitiet;
+    var stt = 0;
+    var nam = DateTime.Now.Year;
+    var thang = DateTime.Now.Month;
+}
+<h2 class="Title_Content">Chi tiết lương của tháng</h2>
+<div class="card-body">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn tháng</label>
+        </div>
+        <select class="custom-select" name="thang" id="thang">
+            <option value="0"> Chọn tháng</option>
+            @for (int item = 1; item < 13; item++)
+            {
+                if (item == thang)
+                {
+                    <option value="@item" selected> @item </option>
+                }
+                else
+                {
+                    <option value="@item"> @item </option>
+                }
+            }
+        </select>
+        <select class="custom-select" name="nam" id="nam">
+            <option value="0"> Chọn năm </option>
+            @for (int item = nam - 1; item <= nam; item++)
+            {
+                if (item == nam)
+                {
+                    <option value="@item" selected> @item </option>
+                }
+                else
+                {
+                    <option value="@item"> @item </option>
+                }
+            }
+        </select>
+    </div>
+    <table class="table table-bordered table-hover myTable">
+        <thead class="text-white text-center">
+            <tr class="bg-primary">
+                <th>STT</th>
+                <th>Hoạt động</th>
+                <th>Số buổi/Số lần</th>
+                <th>Lương</th>
+            </tr>
+        </thead>
+        <tbody id="tableDanhSach" class="text-center">
+            @foreach (var item in chitietfull)
+            {
+                stt += 1;
+                <tr>
+                    <td>
+                        @stt
+                    </td>
+                    <td>
+                        @item.TEN_LOAI
+                    </td>
+                    <td>
+                        @item.SO_BUOI
+                    </td>
+                    <td>
+                        <div class="price">
+                            <span class="price-new">@string.Format("{0:0,0}", item.LUONG) &nbsp;₫</span>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @*@foreach (var item in chitiet_ngoaigio)
+                {
+                    stt += 1;
+                    <tr>
+                        <td>
+                            @stt
+                        </td>
+                        <td>
+                            @item.TEN_LOAI
+                        </td>
+                        <td>
+                            @item.SO_LUONG
+                        </td>
+                        <td>
+                            @item.LUONG
+                        </td>
+                    </tr>
+                }*@
+        </tbody>
+    </table>
+    <center>
+        <a href="~/Admin/Home_User/Thoikhoabieu" class="btn btn-warning">Quay lại</a>
+    </center>
+</div>
+<section>
+    <script>
+        $('#thang').change(function () {
+            var thang = $("#thang").val();
+            var stt = 0;
+            var nam = $("#nam").val();
+            var thangnam = thang + "_" + nam;
+            if (thang != "0" && nam != "0") {
+                $.ajax({
+                    url: "/Home_User/xemluong",
+                    data: {
+                        time: thangnam,
+                    },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $('tbody#tableDanhSach').html("");
+                        $(response).each
+                            (
+                                function (i, e) { //duyet mang doi tuong
+                                    console.log(e);
+                                    stt += 1;
+                                    var tr = $("<tr/>");
+                                    $("<td/>").html(stt).appendTo(tr);
+                                    $("<td/>").html(e.tenloai).appendTo(tr);
+                                    $("<td/>").html(e.sobuoi).appendTo(tr);
+                                    $("<td/>").html("<div class='price'><span class='price-new'>" + e.luong + "</span></div>").appendTo(tr);
+                                    tr.appendTo('tbody#tableDanhSach');
+                                });
+                    }
+                });
+            }
+            else {
+                $('tbody#tableDanhSach').html("");
+            }
+        })
+    </script>
+    <script>
+        $('#nam').change(function () {
+            var thang = $("#thang").val();
+            var stt = 0;
+            var nam = $("#nam").val();
+            var thangnam = thang + "_" + nam;
+            if (thang != "0" && nam != "0") {
+                $.ajax({
+                    url: "/Home_User/xemluong",
+                    data: {
+                        time: thangnam,
+                    },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $('tbody#tableDanhSach').html("");
+                        $(response).each
+                            (
+                                function (i, e) { //duyet mang doi tuong
+                                    console.log(e);
+                                    stt += 1;
+                                    var tr = $("<tr/>");
+                                    $("<td/>").html(stt).appendTo(tr);
+                                    $("<td/>").html(e.tenloai).appendTo(tr);
+                                    $("<td/>").html(e.sobuoi).appendTo(tr);
+                                    $("<td/>").html("<div class='price'><span class='price-new'>" + e.luong + "</span></div>").appendTo(tr);
+                                    tr.appendTo('tbody#tableDanhSach');
+                                });
+                    }
+                });
+            }
+            else {
+                $('tbody#tableDanhSach').html("");
+            }
+        })
+    </script>
+</section>

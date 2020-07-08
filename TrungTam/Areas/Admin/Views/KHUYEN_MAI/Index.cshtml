@@ -1,0 +1,167 @@
+﻿@model IEnumerable<TrungTam.Areas.Admin.Models.KHUYEN_MAI>
+@{
+    ViewBag.Title = "KhuyenMai";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+    Thêm khuyến mãi
+</button>
+<div class="card-body ">
+    <table class="table  table-bordered table-responsive table-hover myTable text-center">
+        <thead class="text-white bg-primary text-center">
+            <tr>
+                <th>Loại Khuyến mãi</th>
+                <th>
+                    <span class="mr-1">Phần trăm giảm</span>
+                    <i class="fa fa-arrow-up" id="SapXepTang"></i>
+                    <i class="fa fa-arrow-down" id="SapXepGiam"></i>
+                </th>
+                <th><em class="fa fa-cog"></em></th>
+            </tr>
+        </thead>
+        <tbody id="tableDanhSach">
+            @foreach (var item in Model)
+            {
+                @*using (Html.BeginForm("Delete", "KHUYEN_MAI", new { id = item.MA_KM }))
+                {
+                    @Html.AntiForgeryToken()*@
+            if (item.TRANG_THAI.Equals(true))
+            { 
+                    <tr>
+                        <td>
+                            <input type="hidden" id="makm" value="@item.MA_KM" />
+                            @Html.DisplayFor(modelItem => item.TEN_KM)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TIEN_GIAM)
+                        </td>
+                        <td>
+
+                            <a class="btn btn-warning" href="~/Admin/KHUYEN_MAI/Edit/@item.MA_KM">
+                                Sửa
+                            </a>
+                            <button class="btn btn-danger xoa" id="xoa">
+                                Xóa
+                            </button>
+                            @*<input type="submit" value="Xóa" class="btn btn-danger" onclick="return confirm('Bạn chắc chắn muốn xóa khuyến mãi này ?');" />*@
+                        </td>
+                    </tr>
+                }
+            }
+</table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title " id="exampleModalLabel">Thông Tin khuyến mãi</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form role="form" action="~/Admin/KHUYEN_MAI/Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                            </div>
+                            <input type="text" name="name" id="name" class="form-control input-sm" placeholder="Loại khuyến mãi">
+                        </div>
+                        <span class="sp-thongbao" id="tbTen"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            <input type="number" name="somon" id="soMDK" class="form-control" placeholder="Số môn đăng kí">
+                        </div>
+                        <span class="sp-thongbao" id="tbsomon"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            <input type="number" name="phantramgiam" id="datepicker" class="form-control" placeholder="Phần trăm giảm">
+                        </div>
+                        <span class="sp-thongbao" id="tbNgay"></span>
+                    </div>
+                    <div class="modal-footer" id="modal-footer">
+                        <button id="btnThemKM" type="submit" class="btn btn-warning">Thêm</button>
+                        <button id="btnDong" type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+            </div>
+        <!-- Modal footer -->
+        </div>
+    </div>
+</div>
+<section>
+    <script>
+        $('table tbody').on('click', 'button.xoa', function () {
+            var ma = $('#makm').val();
+            bootbox.confirm({
+                title: "Thông báo",
+                message: "Bạn chắc chắn muốn xóa ?",
+                buttons: {
+                    confirm: {
+                        label: 'Chắc chắn',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Bấm nhầm',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/KHUYEN_MAI/delete",
+                            data: { id: ma },
+                            type: "POST",
+                            dataType: "JSON",
+                            traditional: true,
+                            success: function (response) {
+                                if (response == "1") {
+                                    bootbox.alert({
+                                        message: "Xóa thành công",
+                                        callback: function () {
+                                            location.reload()
+                                        }
+                                    });
+                                }
+                                else {
+                                    bootbox.alert({
+                                        message: "Thất bại",
+                                        callback: function () {
+                                            location.reload()
+                                        }
+                                    });
+                                }
+                            },
+                            error: function () {
+                                bootbox.alert("Có gì đó sai sai");
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</section>
+
+

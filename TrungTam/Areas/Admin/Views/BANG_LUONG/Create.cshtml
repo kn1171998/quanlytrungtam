@@ -1,0 +1,51 @@
+﻿@model TrungTam.Areas.Admin.Models.BANG_LUONG
+
+@{
+    ViewBag.Title = "Create";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+
+<h2>THÊM LOẠI LƯƠNG</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <div class = "control-label col-md-2">Tên Loại</div>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.TEN_LOAI, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TEN_LOAI, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DON_GIA, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DON_GIA, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DON_GIA, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

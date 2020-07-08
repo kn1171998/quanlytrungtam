@@ -1,0 +1,51 @@
+﻿@model TrungTam.Areas.Admin.Models.NGOAI_GIO
+
+@{
+    ViewBag.Title = "Details";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>NGOAI_GIO</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.NGAY_LAM)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NGAY_LAM)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BANG_LUONG.TEN_LOAI)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BANG_LUONG.TEN_LOAI)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GIAO_VIEN.HO_TEN)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GIAO_VIEN.HO_TEN)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.MA_NGOAI_GIO }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

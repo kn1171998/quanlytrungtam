@@ -1,0 +1,99 @@
+﻿@model TrungTam.Areas.Admin.Models.HOC_SINH
+
+@{
+    ViewBag.Title = "Details";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>HOC_SINH</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.HO_TEN)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HO_TEN)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NG_SINH)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NG_SINH)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GIOI_TINH)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GIOI_TINH)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.KHOI)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.KHOI)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TRUONG)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TRUONG)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SDT)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SDT)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DIA_CHI)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DIA_CHI)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PHU_HUYNH)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PHU_HUYNH)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TAI_KHOAN.MAT_KHAU)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TAI_KHOAN.MAT_KHAU)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.MA_HS }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

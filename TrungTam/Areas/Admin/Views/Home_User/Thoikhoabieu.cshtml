@@ -1,0 +1,209 @@
+﻿
+
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('2'))
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout_gv.cshtml";
+    }
+    var noidung = (List<TrungTam.Areas.Admin.Models.TRANG_CHU>)ViewBag.noidung;
+}
+
+<div class="container pt-5">
+    <marquee class="text-danger"><h3 id="thongbaohocphi">------- Chúc bạn một ngày học tập, làm việc năng động và sáng tạo -------</h3></marquee>
+    <h2 class="Title_Content">Thời Khóa Biểu</h2>
+    <div class="table-responsive ">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr class="bg-primary text-white text-center">
+                    <th class="bg-primary text-white">Ca học</th>
+                    <th>Thứ 2</th>
+                    <th>Thứ 3</th>
+                    <th>Thứ 4</th>
+                    <th>Thứ 5</th>
+                    <th>Thứ 6</th>
+                    <th>Thứ 7</th>
+                    <th>Chủ nhật</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr id="sang">
+                    <th class="bg-primary text-white text-center">Sáng</th>
+                    <td id="1A"></td>
+                    <td id="2A"></td>
+                    <td id="3A"></td>
+                    <td id="4A"></td>
+                    <td id="5A"></td>
+                    <td id="6A"></td>
+                    <td id="0A"></td>
+                </tr>
+                <tr id="chieu">
+                    <th class="bg-primary text-white text-center">Chiều</th>
+                    <td id="1B"></td>
+                    <td id="2B"></td>
+                    <td id="3B"></td>
+                    <td id="4B"></td>
+                    <td id="5B"></td>
+                    <td id="6B"></td>
+                    <td id="0B"></td>
+
+                </tr>
+                <tr id="toi">
+                    <th class="bg-primary text-white text-center">Tối</th>
+                    <td id="1C"></td>
+                    <td id="2C"></td>
+                    <td id="3C"></td>
+                    <td id="4C"></td>
+                    <td id="5C"></td>
+                    <td id="6C"></td>
+                    <td id="0C"></td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+@*<footer class="footer mt-5 " id="lienhe">
+        <div class="container-fluid pl-0 ">
+            <div class="row footer_panel pt-5">
+                <div class="footer_overlay pl-0 "></div>
+                <div class="col-12 col-md-3 col-sm-12">
+                    <h3>TRUNG TÂM BDVH <br /> KHOA HỌC TRẢI NGHIỆM</h3>
+                </div>
+                <div class="col-12 col-md-6 col-sm-6 ml-2">
+                    <table>
+                        <tbody id="data_lienhe">
+                            @foreach (var item in noidung)
+                            {
+                                <tr>
+                                    <td>
+                                        <p>
+                                            <i class="fa fa-address-book mr-2"></i> @item.DIA_CHI
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>
+                                            <i class="fa fa-address-book mr-2"></i> @item.EMAIL
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>
+                                            <i class="fa fa-address-book mr-2"></i> @item.SDT1
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>
+                                            <i class="fa fa-address-book mr-2"></i> @item.SDT2
+                                        </p>
+                                    </td>
+                                </tr>
+                                break;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row Design pt-2 p-1  pr-0 m-0 w-100">
+                <div class="col-12 col-md-12 col-sm-12 ">
+
+                    <p>© 2019 Informing. All Rights Reserved | Design by 3Team | <i class="fa fa-phone"></i> <i class="fab fa-facebook"></i>03.88.174.111</p>
+
+                </div>
+
+            </div>
+        </div>
+
+    </footer>*@
+<section>
+    <script>
+        window.onload = function () {
+            $.ajax({
+                url: "/Home_User/lol",
+                data: { id: 1 },
+                dataType: "Json",
+                type: "GET",
+                success: function (response) {
+                    $(response).each
+                        (
+                        function (i, e) { //duyet mang doi tuong
+                            if (e.THOI_GIAN_BD < "12:59:00") {
+                                var buoi = "A";
+                            }
+                            else if (e.THOI_GIAN_BD < "17:59:00") {
+                                var buoi = "B";
+                            }
+                            else {
+                                var buoi = "C";
+                            }
+                            switch (e.THU) {
+                                case 1:
+                                    {
+                                        $("<p/>").html("Lớp : " + e.TEN_LOP + "<br/> Bắt đầu: " + e.THOI_GIAN_BD + "<br/> Kết thúc : " + e.THOI_GIAN_KT).appendTo("#1" + buoi);
+                                        break;
+                                    }
+                                case 2:
+                                    {
+                                        $("<p/>").html("Lớp : " + e.TEN_LOP + "<br/> Bắt đầu: " + e.THOI_GIAN_BD + "<br/> Kết thúc : " + e.THOI_GIAN_KT).appendTo("#2" + buoi);
+                                        break;
+                                    }
+                                case 3:
+                                    {
+                                        $("<p/>").html("Lớp : " + e.TEN_LOP + "<br/> Bắt đầu: " + e.THOI_GIAN_BD + "<br/> Kết thúc : " + e.THOI_GIAN_KT).appendTo("#3" + buoi);
+                                        break;
+                                    }
+                                case 4:
+                                    {
+                                        $("<p/>").html("Lớp : " + e.TEN_LOP + "<br/> Bắt đầu: " + e.THOI_GIAN_BD + "<br/> Kết thúc : " + e.THOI_GIAN_KT).appendTo("#4" + buoi);
+                                        break;
+                                    }
+                                case 5:
+                                    {
+                                        $("<p/>").html("Lớp : " + e.TEN_LOP + "<br/> Bắt đầu: " + e.THOI_GIAN_BD + "<br/> Kết thúc : " + e.THOI_GIAN_KT).appendTo("#5" + buoi);
+                                        break;
+                                    }
+                                case 6:
+                                    {
+                                        $("<p/>").html("Lớp : " + e.TEN_LOP + "<br/> Bắt đầu: " + e.THOI_GIAN_BD + "<br/> Kết thúc : " + e.THOI_GIAN_KT).appendTo("#6" + buoi);
+                                        break;
+                                    }
+                                case 0:
+                                    {
+                                        $("<p/>").html("Lớp : " + e.TEN_LOP + "<br/> Bắt đầu: " + e.THOI_GIAN_BD + "<br/> Kết thúc : " + e.THOI_GIAN_KT).appendTo("#0" + buoi);
+                                        break;
+                                    }
+                            }
+                        });
+                }
+            });
+            $.ajax({
+                url: "/Home_User/nhacnhohocphi",
+                data: { id: 1 },
+                dataType: "Json",
+                type: "GET",
+                success: function (response) {
+                    if (response != 0) {
+                        $(response).each
+                            (
+                            $("#thongbaohocphi").html("---- Bạn chưa thanh toán học phí tháng này : " + response + " vnđ ----")
+                            );
+                    }
+                }
+            });
+        }
+    </script>
+</section>

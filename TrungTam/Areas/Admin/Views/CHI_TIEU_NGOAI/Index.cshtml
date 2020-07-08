@@ -1,0 +1,185 @@
+﻿
+@model IEnumerable<TrungTam.Areas.Admin.Models.CHI_TIEU_NGOAI>
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+    int stt = 0;
+}
+<style>
+    /*.my-custom-scrollbar {
+        position: relative;
+        height: 200px;
+        overflow: auto;
+    }
+
+    .table-wrapper-scroll-y {
+        display: block;
+    }*/
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_asc:before,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_asc_disabled:before,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:before {
+        bottom: .5em;
+    }
+</style>
+<h2 class="Title_Content">Thông tin chi tiêu</h2>
+<div class="card-body">
+    <button type="button" class="btn btn-primary mt-5" data-toggle="modal" data-target="#exampleModal">
+        <i class="fa fa-plus-square mr-2"></i>Thêm chi tiêu
+    </button>
+    <hr />
+    <table id="dtVerticalScrollExample" class="table table-bordered table-responsive table-hover myTable">
+        <thead class="text-white text-center">
+            <tr class="bg-primary">
+                <th>STT</th>
+                <th>
+                    Tên chi têu
+                </th>
+                <th>
+                    Thời gian
+                </th>
+                <th>
+                    Thành tiền
+                </th>
+                <th><em class="fa fa-cog"></em></th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @foreach (var item in Model)
+            {
+                stt++;
+                //using (Html.BeginForm("Delete", "CHI_TIEU_NGOAI", new { id = item.MA_CT }))
+                //{
+                    <tr>
+                        <td>@stt</td>
+                        <td>
+                            @item.TEN_CT
+                        </td>
+                        <td>
+                            @string.Format("{0:dd/MM/yyyy}", item.NGAY)
+                        </td>
+                        <td>
+                            @string.Format("{0:0,0}", item.THANH_TIEN)
+                        </td>
+                        <td>
+                            <a id="btnCapNhatNV" class="btn btn-warning text-white" href="~/Admin/CHI_TIEU_NGOAI/Edit/@item.MA_CT">
+                                Sửa
+                            </a>
+                            <button type="button" name="xoa" class="btn btn-danger xoa" id="xoa" value="@item.MA_CT">Xoá</button>
+                            @*<input type="submit" class="btn btn-danger" value="Xóa" onclick="return confirm('Bạn chắc chắn muốn xóa phần tử này ?');" />*@
+                        </td>
+                    </tr>
+                //}
+            }
+        </tbody>
+    </table>
+</div>
+@*=============================================================*@
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title title_TieuDe" id="exampleModalLabel">Thêm chi tiêu</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form role="form" action="/CHI_TIEU_NGOAI/Create" method="post" onsubmit="return CTNgoai()">
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                            </div>
+                            <input type="text" name="name" id="name" class="form-control input-sm" placeholder="Tên chi tiêu">
+                        </div>
+                        <span class="sp-thongbao" id="tbTen"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            <input type="date" name="ngay" id="datepicker" class="form-control" placeholder="Ngày chi tiêu">
+                        </div>
+                        <span class="sp-thongbao" id="tbNgay"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-dollar"></i></span>
+                            </div>
+                            <input type="number" name="thanhtien" id="tien" class="form-control" placeholder="Số tiền">
+                        </div>
+                        <span class="sp-thongbao" id="tbTT"></span>
+                    </div>
+                </div>
+                <div class="modal-footer" id="modal-footer">
+                    <button id="btnThemNV" type="submit" class="btn btn-primary" onclick="return confirm('Bạn chắc chắn muốn thêm chi tiêu ?');">Thêm chi tiêu</button>
+                    <button id="btnDong" type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                </div>
+            </form>
+        </div>
+        <!-- Modal footer -->
+    </div>
+</div>
+@*===============================================================*@
+<script>
+    $(document).ready(function () {
+        $('#dtVerticalScrollExample').DataTable({
+            //"scrollY": "200px",
+            //"scrollCollapse": true,
+        });
+        //$('.dataTables_length').addClass('bs-select');
+    });
+</script>
+<script>
+    $('table tbody').on('click', 'button.xoa', function () {
+        //var token = $("[name='__RequestVerificationToken']").val();
+        var mact = $(this).closest('tr').find('button[name="xoa"]').val();
+        bootbox.confirm({
+            message: "Bạn có chắc muốn xoá không?",
+            buttons: {
+                confirm: {
+                    label: "Có",
+                    className: "btn btn-danger"
+                },
+                cancel: {
+                    label: "Không",
+                    className: "btn btn-success"
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        url: "/CHI_TIEU_NGOAI/Delete",
+                        data: { id: mact },
+                        type: "POST",
+                        success: function (response) {
+                            if (response == "1") {
+                                bootbox.alert({ message: "Xoá thành công", callback: function () { location.reload() } });
+                            } else {
+                                bootbox.alert("Xoá thất bại");
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    });
+</script>

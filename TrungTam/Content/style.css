@@ -1,0 +1,37 @@
+﻿body {
+}
+.Title_Content {
+    font-size: 34px;
+    text-align: center;
+    color: #4268D6;
+    font-weight: bold;
+}
+.title_TieuDe {
+    text-align: center;
+    color: #4268D6;
+}
+.myContent {
+    border: 1px solid dashed;
+    background-color: #fbbd61;
+    margin: 40px;
+}
+    .myContent span {
+        /*color: #4268D6;*/
+        color: white;
+        font-size: 17px;
+    }
+        .myContent span i {
+            font-size: 22px;
+            color: #4268D6;
+        }
+
+.navbar-nav .nav-item a:hover{
+    background-color: goldenrod;
+}
+h6{
+    border-radius:5px;
+}
+.sp-thongbao{
+    color:red;
+}
+

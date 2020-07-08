@@ -1,0 +1,273 @@
+﻿@model IEnumerable<TrungTam.Areas.Admin.Models.BUOI_HOC>
+
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+    var chonlop = (List<TrungTam.Areas.Admin.Abstracts.THOI_KHOA_BIEU_LOP_HOC>)ViewBag.chonlop;
+    var lop = (List<TrungTam.Areas.Admin.Models.LOP_HOC>)ViewBag.Lop;
+}
+<h2 class="Title_Content">Điểm Danh</h2>
+<form action="/Admin/BUOI_HOC/Create" method="post">
+    @*Chọn lớp trong ngày đó*@
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn ngày</label>
+        </div>
+        <input type="date" id="datepicker" name="ngay" />
+        <div class="input-group-prepend">
+            <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn Lớp</label>
+        </div>
+        <select class="custom-select" name="lopp" id="lop"></select>
+        @*<button type="button" class="btn-info" id="all_lop" name="all_lop">Tất cả</button>*@
+    </div>
+    <hr />
+    @*Giáo Viên*@
+    <div class="row ">
+        <div col-2></div>
+        <div id="result" class="col-6 ">
+            @*thông tin giáo viên*@
+        </div>
+        @Html.AntiForgeryToken()
+
+        @*data từ Ajax giáo viên chạy vào*@
+        <div class="col-6" id="diemdanh_daythay" style="display:none">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Điểm danh</label>
+                </div>
+                <select class="custom-select" name='diemdanhGV' id='diemdanhGV'>
+                    <option value="1" selected id="1">Có</option>
+                    <option value="0">Vắng</option>
+                </select>
+
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn giáo viên dạy thay</label>
+                </div>
+                <select class="custom-select" name='daythay' id='daythay'>
+                    @*Ajax load ds GV đổ vào đây*@
+                </select>
+            </div>
+
+        </div>
+        <div class="col-12">
+            <div class="input-group mb-auto">
+                <div class="input-group-prepend">
+                    <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Link đánh giá</label>
+                </div>
+                <input type="text" class="form-control" id="linkdanhgia" name="linkdanhgia" width="100" />
+            </div>
+        </div>
+
+    </div>
+    <div id="error"></div>
+    <hr />
+    <center><h3 class="title_TieuDe" id="tieude">Danh sách học viên</h3></center>
+
+    @*Bảng danh sách học viên*@
+    <table class="table table-bordered table-responsive table-hover" id="listHS">
+        <thead class="text-center bg-primary text-white">
+            <tr>
+                <td>Họ và Tên</td>
+                <td>SDT Phụ huynh</td>
+                <td>Địa chỉ</td>
+                <td>Điểm danh</td>
+                <td>Ghi chú</td>
+            </tr>
+        </thead>
+        <tbody id="HS" class="text-center"></tbody> @*tbody rỗng để data từ Ajax học viên chạy vào*@
+    </table>
+    <center>
+        <button type="submit" class="btn btn-primary" name="save" id="save"><i class="fa fa-save mr-2"></i>Lưu</button>
+    </center>
+</form>
+@* Ajax hiện giáo viên phụ trách lớp dựa vào combobox *@
+<section>
+    <script>
+        $('#lop').change(function () {
+            $("#linkdanhgia").val("");
+            var malop = $('#lop').val();
+            $("div#result").html(""); //xoa noi dung
+            if (malop != "Chọn lớp") {
+                //$("#save").attr("Style", "display:block");
+                $("#daythay").html("");
+                $("#diemdanhGV").empty();
+                $("<option value='1' selected/>").html("Có").appendTo("#diemdanhGV");
+                $("<option value='0'/>").html("Vắng").appendTo("#diemdanhGV");
+                $("#diemdanh_daythay").attr("Style", "display:block");
+                $("#error").html("");
+                $.ajax({
+                    url: "/BUOI_HOC/LoadLop",
+                    data: { id: malop },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        if (response != "0") {
+                            $(response).each
+                                (
+                                function (i, e) { //duyet mang doi tuong
+                                        if (e.tinhtrang == true && e.check != '0') {
+                                        $("")
+                                        $("<div/>").add("<input type='hidden' name='malop' value='" + e.malop + "'/><input type='hidden' name='siso' value='" + e.siso + "'/>").appendTo("div#result");
+                                        $("<div class='col-2'/>").add("<h6 class='text-white text-center bg-primary p-2 mb-3 mt-1'>  Giáo viên :&nbsp;&nbsp; " + e.hoten + "</h5> <input type ='hidden' name ='hoten' value='"
+                                            + e.hoten + "'/><input type='hidden' id='magv' name='magv' value='" + e.magv + "'/>").appendTo("div#result");
+                                        $("<div class='col-2'/>").add("<h6 class='text-white text-center bg-primary p-2'> Điện thoại :&nbsp;&nbsp;" + e.dienthoai + "</h5><input type='hidden' name='dienthoai' value= '"
+                                            + e.dienthoai + "'/>").appendTo("div#result");
+                                        $("tbody#HS").attr("display:none");
+                                        $("#save").show();
+                                    }
+                                    else {
+                                        $("#diemdanh_daythay").attr("Style", "display:none");
+                                        $("#save").hide();
+                                        $("#diemdanhGV").html("");
+                                        $("<div class='col-2'/>").add("<center><h4>Giáo viên phụ trách lớp đã bị xóa! Phải chọn giáo viên mới!</h4></center>").appendTo("div#error");
+                                        $("<div class='col-6'/>").add("<center><a href='/Admin/LOP_HOC/Edit/" + e.malop + "'class='btn btn-warning'>Đổi giáo viên</a></center>").appendTo("div#error");
+                                    }
+                                }
+                                );
+                        }
+                        else {
+                            bootbox.alert({
+                                message: "Không có bảng lương phù hợp với sỉ số của lớp này!",
+                                callback: function () {
+                                    //location.reload()
+                                    var redirectwindow = window.open('@Url.Action("Index","BANG_LUONG")', '_parent');
+                                redirectwindow.location;
+                                }
+                            });
+                        }
+                    }
+
+                });
+            }
+            else {
+                //$("#save").attr("Style", "display:none");
+                $("#save").hide();
+                $("#diemdanh_daythay").attr("Style", "display:none");
+            }
+
+        });
+    </script>
+</section>
+@* Ajax hiện danh sách học viên trong lớp dựa vào combobox *@
+<section>
+    <script>
+        $('#lop').change(function () {
+            var malop = $('#lop').val();
+            $("tbody#HS").html(""); //xoa noi dung
+            $.ajax({
+                url: "/BUOI_HOC/LoadHS",
+                data: { id: malop },
+                dataType: "Json",
+                type: "GET",
+                success: function (response) {
+                    $(response).each
+                        (
+                            function (i, e) { //duyet mang doi tuong
+                                if (e.TRANG_THAI == true) {
+                                    var tr = $("<tr class='onRow'/>");
+                                    $("<td/>").html(e.HO_TEN).appendTo(tr);//bo sung <td> vao <tr>
+                                    $("<td/>").html(e.SDT).appendTo(tr);//bo sung <td> vao <tr>
+                                    $("<td/>").html(e.DIA_CHI).appendTo(tr);
+                                    var td1 = $("<td/>");
+                                    var td2 = $("<td/>");
+                                    $("<div/>").add("<select name='diemdanh" + e.MA_HS
+                                        + "' id='diemdanh'><option value='-1'>Chưa điểm danh</option><option value='1'>Có</option><option value='0'>Vắng</option></select>").appendTo(td1);
+                                    td1.appendTo(tr);
+                                    $("<div/>").add("<input type ='text' name ='lido" + e.MA_HS + "' id='lido" + e.MA_HS + "'/>").appendTo(td2);
+                                    td2.appendTo(tr);
+                                    tr.appendTo("tbody#HS");// bo sung <tr> vao <tbody>
+                                }
+                            }
+                        );
+                }
+
+            });
+        });
+    </script>
+</section>
+@* Ajax hiện danh sách giáo viên nếu có chọn dạy thay *@
+<section>
+    <script>
+        $('#diemdanhGV').change(function () {
+            $("#daythay").html(""); //xoa noi dung
+            if ($("#diemdanhGV").val() == "0") {
+                var magv = $("#magv").val();
+                $.ajax({
+                    url: "/BUOI_HOC/LoadGV",
+                    data: { id: magv },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $(response).each
+                            (
+                                function (i, e) { //duyet mang doi tuong
+                                    if (e.MA_GV != magv) {
+                                        $("<option value='" + e.MA_GV + "'/>").html(e.HO_TEN).appendTo("#daythay");//bo sung <td> vao <tr>
+                                    }
+                                }
+                            );
+                    }
+                });
+            }
+        });
+    </script>
+</section>
+@*hiện tất cả lớp*@
+<section>
+    <script>
+        $('#datepicker').change(function () {
+            var ma = $('#datepicker').val();
+            var now = new Date();
+            var day = now.getFullYear + "-" + now.getMonth() + "-" + now.getDay();
+            if (ma <= day) {
+                $.ajax({
+                    url: "/BUOI_HOC/AllLop",
+                    data: { idd: ma },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $("#lop").html(""), //xoa noi dung
+                            $("<option value='Chọn lớp'/>").html("Chọn lớp").appendTo("#lop"),
+                            $(response).each
+                                (
+                                    function (i, e) { //duyet mang doi tuong
+                                        console.log(e);
+                                        if (e.trangthai == 0 && e.check == false)
+                                            $("<option value='" + e.malop + "'/>").html(e.tenlop).appendTo("#lop");
+                                    }
+                                );
+                    }
+                });
+            }
+        });
+    </script>
+</section>
+@*Khóa nút save*@
+<section>
+    <script>
+        $("#save").submit(function () {
+            debugger
+            $("#save").hide();
+        })
+    </script>
+    <script>
+        window.onload = function () {
+            do_validate();
+        };
+        function do_validate() {
+            $("#save").hide();
+
+        };
+    </script>
+</section>

@@ -1,0 +1,453 @@
+﻿@model IEnumerable<TrungTam.Areas.Admin.Models.BUOI_HOC>
+
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('2'))
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    var chonlop = (List<TrungTam.Areas.Admin.Models.CT_LOP_HOC>)ViewBag.chonlop;
+    var yearhientai = DateTime.Now.Year;
+    var thanghientai = DateTime.Now.Month;
+}
+@*Chọn lớp trong ngày đó*@
+<div class="container pt-5">
+    <input type="hidden" value="@id" id="mahs" />
+    <marquee><h3 id="thongbaohocphi">------- Chúc bạn một ngày học tập thật năng động và sáng tạo -------</h3></marquee>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn lớp</label>
+        </div>
+        <div id="listlop">
+            <select class="custom-select" name="lopp" id="lop">
+                <option>Chọn lớp</option>
+                @foreach (var item in chonlop)
+                {
+
+                    <option value="@item.MA_LOP">@item.LOP_HOC.TEN_LOP</option>
+                }
+            </select>
+        </div>
+        <div class="input-group-prepend">
+            <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn tháng</label>
+        </div>
+        <div id="listthang">
+            <select class="custom-select" name="thang" id="thang">
+                @for (int i = 12; i > 0; i--)
+                {
+                    if (i == thanghientai)
+                    {
+                        <option value="@i" selected>@i</option>
+                    }
+                    else
+                    {
+                        <option value="@i">@i</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="input-group-prepend">
+            <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn năm</label>
+        </div>
+        <div id="listnam">
+            <select class="custom-select" name="nam" id="nam">
+                @for (int i = 2018; i <= yearhientai; i++)
+                {
+                    if (i == yearhientai)
+                    {
+                        <option value="@i" selected>@i</option>
+                    }
+                    else
+                    {
+                        <option value="@i">@i</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="input-group-prepend">
+            <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn Buổi</label>
+        </div>
+        <select class="custom-select" name="buoi" id="buoi" style="display:none">
+            @*danh sách các buổi của lớp đó*@
+        </select>
+    </div>
+    <hr />
+    @*Thông tin giáo viên lên lớp*@
+    <div class="row ">
+        <div col-2></div>
+        <div id="hoten" class="col-6 ">
+            @*thông tin giáo viên*@
+        </div>
+        <div id="sdt" class="col-6 ">
+            @*thông tin giáo viên*@
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="input-group mb-auto">
+            <div id="danhgia" class="input-group-prepend">
+                
+            </div>
+        </div>
+    </div>
+    <hr />
+    @*Danh sách học viên*@
+    <table class="table table-bordered table-hover" id="listHS" style="display:none">
+        <thead class="text-center bg-primary text-white">
+            <tr>
+                <td>Họ và Tên</td>
+                <td>Điện thoại</td>
+                <td>Điểm danh</td>
+                <td>Ghi chú</td>
+                <td>Nhận xét của giáo viên</td>
+                <td>BTVN</td>
+                <td>Điểm số</td>
+                <td>Nhận xét về giáo viên</td>
+            </tr>
+        </thead>
+        <tbody id="HS"></tbody> @*tbody rỗng để data từ Ajax học viên chạy vào*@
+    </table>
+    @Html.AntiForgeryToken()
+    <div id="result" class="row">
+        @*data từ Ajax giáo viên chạy vào*@
+    </div>
+</div>
+@*Ajax load danh sách buổi*@
+<section>
+    <script>
+        $('#lop').change(function () {
+            $("#listHS").attr("Style", "display:none");
+            $("#detail").attr("Style", "display:none");
+            $("#hoten").html("");
+            $("#danhgia").html("");
+            $("#sdt").html("");
+            var malop = $('#lop').val();
+            var thang = $('#thang').val();
+            var nam = $('#nam').val();
+            if (malop != "Chọn lớp") {
+                $("div#lbl_buoi").attr("Style", "display:block");
+                $("#buoi").attr("Style", "display:block");
+                $("select#buoi").html(""); //xoa noi dung
+                $("<option/>").html("Chọn buổi học").appendTo("select#buoi");
+                $.ajax({
+                    url: "/BUOI_HOC/LoadBuoi",
+                    data: { id: malop, thang: thang, nam: nam },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $(response).each
+                            (
+                                function (i, e) { //duyet mang doi tuong
+                                    if (malop == e.malop) {
+                                        $("<option value='" + e.mabuoi + "'/>").html("Buổi " + e.sttbuoi + " | " + e.thoigian)
+                                            .appendTo("select#buoi");
+                                    }
+                                });
+                    }
+                });
+            }
+            else {
+                $("div#lbl_buoi").attr("Style", "display:none");
+                $("#buoi").attr("Style", "display:none");
+            }
+        });
+    </script>
+</section>
+@*Ajax chọn tháng*@
+<section>
+    <script>
+        $('#thang').change(function () {
+            $("#listHS").attr("Style", "display:none");
+            $("#detail").attr("Style", "display:none");
+            $("#hoten").html("");
+            $("#danhgia").html("");
+            $("#sdt").html("");
+            var malop = $('#lop').val();
+            var thang = $('#thang').val();
+            var nam = $('#nam').val();
+            if (malop != "Chọn lớp") {
+                $("div#lbl_buoi").attr("Style", "display:block");
+                $("#buoi").attr("Style", "display:block");
+                $("select#buoi").html(""); //xoa noi dung
+                $("<option/>").html("Chọn buổi học").appendTo("select#buoi");
+                $.ajax({
+                    url: "/BUOI_HOC/LoadBuoi",
+                    data: { id: malop, thang: thang, nam: nam },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $(response).each
+                            (
+                                function (i, e) { //duyet mang doi tuong
+                                    if (malop == e.malop) {
+                                        $("<option value='" + e.mabuoi + "'/>").html("Buổi " + e.sttbuoi + " | " + e.thoigian)
+                                            .appendTo("select#buoi");
+                                    }
+                                });
+                    }
+                });
+            }
+            else {
+                $("div#lbl_buoi").attr("Style", "display:none");
+                $("#buoi").attr("Style", "display:none");
+            }
+        });
+    </script>
+</section>
+@*Ajax chọn năm*@
+<section>
+    <script>
+        $('#nam').change(function () {
+            $("#listHS").attr("Style", "display:none");
+            $("#detail").attr("Style", "display:none");
+            $("#hoten").html("");
+            $("#danhgia").html("");
+            $("#sdt").html("");
+            var malop = $('#lop').val();
+            var thang = $('#thang').val();
+            var nam = $('#nam').val();
+            if (malop != "Chọn lớp") {
+                $("div#lbl_buoi").attr("Style", "display:block");
+                $("#buoi").attr("Style", "display:block");
+                $("select#buoi").html(""); //xoa noi dung
+                $("<option/>").html("Chọn buổi học").appendTo("select#buoi");
+                $.ajax({
+                    url: "/BUOI_HOC/LoadBuoi",
+                    data: { id: malop, thang: thang, nam: nam },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $(response).each
+                            (
+                                function (i, e) { //duyet mang doi tuong
+                                    if (malop == e.malop) {
+                                        $("<option value='" + e.mabuoi + "'/>").html("Buổi " + e.sttbuoi + " | " + e.thoigian)
+                                            .appendTo("select#buoi");
+                                    }
+                                });
+                    }
+                });
+            }
+            else {
+                $("div#lbl_buoi").attr("Style", "display:none");
+                $("#buoi").attr("Style", "display:none");
+            }
+        });
+    </script>
+</section>
+@*Ajax load thông tin học sinh - giáo viên của buổi học*@
+<section>
+    <script>
+        $('#buoi').change(function () {
+            $("tbody#HS").html(""); //xoa noi dung
+            $("#hoten").html(""); //xoa noi dung
+            $("#sdt").html(""); //xoa noi dung
+            $("#danhgia").html("");
+            var mabuoi = $('#buoi').val();
+            var malop = $('#lop').val();
+            var mahv = $('#mahs').val();
+            if (mabuoi != "Chọn buổi học") {
+                $("#listHS").attr("Style", "display:block");
+                $("#detail").attr("Style", "display:block");
+                //Ajax học sinh
+                $.ajax({
+                    url: "/BUOI_HOC/Load_CTBuoi",
+                    data: { id: mabuoi },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $(response).each
+                            (
+                                function (i, e) { //duyet mang doi tuong
+                                    if (e.mahs == mahv) {
+                                        if (e.linkdanhgia == "")
+                                            $("#danhgia").html("<label class='input-group-text bg-primary text-white' for='inputGroupSelect01'>Chưa có link đánh giá</label>");
+                                        else
+                                            $("#danhgia").html("<a id='btn_details' class='btn btn-success' href='" + e.linkdanhgia + "'  target='__blank'>link đánh giá</a>");
+                                        $("#hoten").html("<label class='input-group-text bg-primary text-white' for='inputGroupSelect01'>Giáo viên : " + e.hotengv + "</label>");
+                                        $("#sdt").html("<label class='input-group-text bg-primary text-white' for='inputGroupSelect01'>Liên hệ : " + e.sdt + "</label>");
+                                        var tr = $("<tr/>");
+                                        $("<td/>").html(e.hoten).appendTo(tr);//bo sung <td> vao <tr>
+                                        $("<td/>").html(e.dienthoai).appendTo(tr);//bo sung <td> vao <tr>
+                                        if (e.diemdanhhs == "1") {
+                                            $("<td/>").html("Có").appendTo(tr);
+                                        }
+                                        else if (e.diemdanhhs == "0") {
+                                            $("<td/>").html("Vắng").appendTo(tr);
+                                        }
+                                        else {
+                                            $("<td/>").html("Chưa điểm danh").appendTo(tr);
+                                        }
+                                        $("<td/>").html(e.lido).appendTo(tr);
+                                        if (e.nhanxetgv == null) {
+                                            $("<td/>").html("").appendTo(tr);
+                                        }
+                                        else {
+                                            $("<td/>").html(e.nhanxetgv).appendTo(tr);
+                                        }
+                                        if (e.btvn == null) {
+                                            $("<td/>").html("").appendTo(tr);
+                                        }
+                                        else {
+                                            $("<td/>").html(e.btvn).appendTo(tr);
+                                        }
+                                        $("<td/>").html(e.diemso).appendTo(tr);
+                                        if (e.nhanxetvegv == null) {
+                                            $("<td/>").html("<input type='text' value='' id='nhanxetcuahs'/>").appendTo(tr);
+                                        }
+                                        else {
+                                            $("<td/>").html("<input type='text' value='" + e.nhanxetvegv + "'id='nhanxetcuahs'/>").appendTo(tr);
+                                        }
+                                        $("<td/>").html("<input type='hidden' value='" + e.mahs + "' id='mahs'/><button id='edit' class='btn btn-success edit' value='" + e.mahv
+                                            + "'>Thêm nhận xét</button>").appendTo(tr);
+                                        tr.appendTo("tbody#HS");// bo sung <tr> vao <tbody>
+                                    }
+                                    else {
+                                        var tr = $("<tr/>");
+                                        $("<td/>").html(e.hoten).appendTo(tr);//bo sung <td> vao <tr>
+                                        $("<td/>").html(e.dienthoai).appendTo(tr);//bo sung <td> vao <tr>
+                                        if (e.diemdanhhs) {
+                                            $("<td/>").html("Có").appendTo(tr);
+                                        }
+                                        else {
+                                            $("<td/>").html("Vắng").appendTo(tr);
+                                        }
+                                        $("<td/>").html(e.lido).appendTo(tr);
+                                        if (e.nhanxetgv == null) {
+                                            $("<td/>").html("").appendTo(tr);
+                                        }
+                                        else {
+                                            $("<td/>").html(e.nhanxetgv).appendTo(tr);
+                                        }
+                                        if (e.btvn == null) {
+                                            $("<td/>").html("").appendTo(tr);
+                                        }
+                                        else {
+                                            $("<td/>").html(e.btvn).appendTo(tr);
+                                        }
+                                        $("<td/>").html(e.diemso).appendTo(tr);
+                                        $("<td/>").html(e.nhanxetvegv).appendTo(tr);
+                                        $("<td/>").html("").appendTo(tr);
+                                        tr.appendTo("tbody#HS");// bo sung <tr> vao <tbody>
+                                    }
+                                });
+                    }
+                });
+                //=================================================================
+            }
+            else {
+                $("#listHS").attr("Style", "display:none");
+                $("#detail").attr("Style", "display:none");
+            }
+        });
+    </script>
+</section>
+<section>
+    <script>
+        window.onload = function () {
+            $.ajax({
+                url: "/Home_User/nhacnhohocphi",
+                data: { id: 1 },
+                dataType: "Json",
+                type: "GET",
+                success: function (response) {
+                    if (response != 0) {
+                        $(response).each
+                            (
+                                $("#thongbaohocphi").html("---- Bạn chưa thanh toán học phí tháng này : " + response + " vnđ ----")
+                            );
+                    }
+                }
+            });
+        }
+    </script>
+</section>
+<section>
+    <script>
+        //$('table tbody').on('click', 'button.edit', function () {
+        //    var nhanxetcuahs = $(this).closest('tr').find('input[id="nhanxetcuahs"]').val();
+        //    var mahv = $(this).closest('tr').find('input[id="mahs"]').val();
+        //    var buoi = $('#buoi').val();
+        //    $.ajax({
+        //        url: "/BUOI_HOC/nhanxetvegv",
+        //        data: { id: mahv, noidung: nhanxetcuahs, mabuoi: buoi },
+        //        type: "POST",
+        //        dataType: "JSON",
+        //        traditional: true,
+        //        success: function (response) {
+        //            if (response == "1") {
+        //                bootbox.alert({
+        //                    message: "Nhận xét thành công",
+        //                    callback: function () {
+        //                        location.reload()
+        //                    }
+        //                });
+        //            }
+        //            else {
+        //                   bootbox.alert({
+        //                   message: "Không thể nhận xét",
+        //                   callback: function () {
+        //                          location.reload()
+        //                       }
+        //                   });
+        //            }
+        //        },
+        //        error: function () {
+        //            bootbox.alert("Không thể thành công");
+        //        }
+        //    });
+        //});
+        $('table tbody').on('click', 'button.edit', function () {
+            var nhanxetcuahs = $(this).closest('tr').find('input[id="nhanxetcuahs"]').val();
+            var mahv = $(this).closest('tr').find('input[id="mahs"]').val();
+            var buoi = $('#buoi').val();
+            bootbox.confirm({
+                title: "Thông báo",
+                message: "Bạn có muốn lưu nhận xét hay không?",
+                buttons: {
+                    confirm: {
+                        label: 'Có',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Không',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/BUOI_HOC/nhanxetvegv",
+                            data: { id: mahv, noidung: nhanxetcuahs, mabuoi: buoi },
+                            type: "POST",
+                            dataType: "JSON",
+                            traditional: true,
+                            success: function (response) {
+                                if (response == "1") {
+                                    bootbox.alert({
+                                        message: "Nhận xét thành công",
+                                        callback: function () {
+                                            location.reload()
+                                        }
+                                    });
+                                }
+                                else {
+                                    bootbox.alert({
+                                        message: "Không thể nhận xét",
+                                        callback: function () {
+                                            location.reload()
+                                        }
+                                    });
+                                }
+                            },
+                            error: function () {
+                                bootbox.alert("Không thể thành công");
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</section>

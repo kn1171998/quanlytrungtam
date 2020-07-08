@@ -1,0 +1,218 @@
+﻿@model IEnumerable<TrungTam.Areas.Admin.Abstracts.LopHoc_New>
+
+@{
+    ViewBag.Title = "Edit";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+<style>
+    /*.my-custom-scrollbar {
+        position: relative;
+        height: 200px;
+        overflow: auto;
+    }
+
+    .table-wrapper-scroll-y {
+        display: block;
+    }*/
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_asc:before,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_asc_disabled:before,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:before {
+        bottom: .5em;
+    }
+</style>
+<h2 class="Title_Content">Danh sách các lớp</h2>
+@*<div class="card-body">*@
+<table id="dtVerticalScrollExample" class="table table-striped table-bordered myTable table-hover table-responsive">
+    @Html.AntiForgeryToken()
+    <thead class="text-white bg-primary text-center">
+        <tr>
+            <th>
+                Tên lớp
+            </th>
+            <th>
+                Sỉ số
+            </th>
+            <th>
+                Giáo viên
+            </th>
+            <th>
+                Khối
+            </th>
+            <th>
+                Loại
+            </th>
+            <th>
+                Môn
+            </th>
+            <th>Trạng thái</th>
+            <th>Ngày mở lớp</th>
+            <th>Ngày bắt đầu</th>
+            <th>Ngày kết thúc</th>
+            <th><em class="fa fa-cog"></em></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.tenlop)
+                    <input type="hidden" id="malop" name="malop" value="@item.malop" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.siso)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.hoten)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.tenkhoi)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.tenloai)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.tenmon)
+                </td>
+
+                @if (item.trangthai == 1)
+                {
+                    <td style="color:green;">Đang mở <button class="btn btn-success bd">Bắt đầu học</button></td>
+                    <td>@item.ngaymolop.Value.ToShortDateString()</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <a class="btn btn-info" href="/Admin/LOP_HOC/Details/@item.malop">Chi tiết</a>
+                        <a class="btn btn-warning" href="/Admin/LOP_HOC/Edit/@item.malop">Sửa</a>
+                    </td>
+                }
+                else if (item.trangthai == 0)
+                {
+                    <td style="color:orange; padding-bottom:2px;">Đang học <button class="btn btn-outline-danger kt">Kết thúc lớp học</button></td>
+                    <td>@item.ngaymolop.Value.ToShortDateString()</td>
+                    <td>@item.ngayhoc.Value.ToShortDateString()</td>
+                    <td>&nbsp;</td>
+                    <td>
+                        <a class="btn btn-info" href="/Admin/LOP_HOC/Details/@item.malop">Chi tiết</a>
+                        <a class="btn btn-warning" href="/Admin/LOP_HOC/Edit/@item.malop">Sửa</a>
+                    </td>
+                }
+                else
+                {
+                    <td style="color:red;">Đã kết thúc</td>
+                    <td>@item.ngaymolop.Value.ToShortDateString()</td>
+                    <td>@item.ngayhoc.Value.ToShortDateString()</td>
+                    <td>@item.ngayketthuc.Value.ToShortDateString()</td>
+                    <td>&nbsp;</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+@*</div>*@
+@section ClientScript{
+    <script>
+        $('table tbody').on('click', 'button.bd', function () {
+            var token = $("[name='__RequestVerificationToken']").val();
+            var malop = $(this).closest('tr').find('input[name="malop"]').val();
+            bootbox.confirm({
+                message: "Bạn có chắc chắn sẽ bắt đầu lớp không?",
+                buttons: {
+                    confirm: {
+                        label: "Có",
+                        className: "btn-danger"
+                    },
+                    cancel: {
+                        label: "Không",
+                        className: "btn-success"
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/Admin/LOP_HOC/StatuClass",
+                            data: {
+                                __RequestVerificationToken: token,
+                                id: malop
+                            },
+                            type: "POST",
+                            success: function (response) {
+                                bootbox.alert({
+                                    message: "Thành công",
+                                    callback: function () {
+                                        location.href = '@Url.Action("Index", "LOP_HOC")';
+                                    }
+                                });
+                            },
+                            error: function () {
+                                bootbox.alert("Không thành công");
+                            }
+                        });
+                    }
+                }
+            })
+        });
+         $('table tbody').on('click', 'button.kt', function () {
+            var token = $("[name='__RequestVerificationToken']").val();
+            var malop = $(this).closest('tr').find('input[name="malop"]').val();
+            bootbox.confirm({
+                message: "Bạn có chắc chắn sẽ kết thúc lớp không?",
+                buttons: {
+                    confirm: {
+                        label: "Có",
+                        className: "btn-danger"
+                    },
+                    cancel: {
+                        label: "Không",
+                        className: "btn-success"
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/Admin/LOP_HOC/StatuTheEnd",
+                            data: {
+                                __RequestVerificationToken: token,
+                                id: malop
+                            },
+                            type: "POST",
+                            success: function (response) {
+                                bootbox.alert({
+                                    message: "Thành công",
+                                    callback: function () {
+                                        location.href = '@Url.Action("Index", "LOP_HOC")';
+                                    }
+                                });
+                            },
+                            error: function () {
+                                bootbox.alert("Không thành công");
+                            }
+                        });
+                    }
+                }
+            })
+        });
+        $(document).ready(function () {
+            $('#dtVerticalScrollExample').DataTable({
+                //"scrollY": "200px",
+                //"scrollCollapse": true,
+            });
+            $('.dataTables_length').addClass('bs-select');
+        });
+    </script>
+}

@@ -1,0 +1,59 @@
+﻿@model TrungTam.Areas.Admin.Models.KHOI_LOP
+
+@{
+    ViewBag.Title = "Edit";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal myContent m-0 p-3">
+    <h2 class="Title_Content">Cập Nhật</h2>
+    <h4 class="title_TieuDe">Khối Lớp</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.MA_KHOI)
+
+    <div class="form-group ">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-chalkboard mr-2"></i>Khối Lớp</span></div>
+
+            <div class="col-md-7 col-lg-6">
+
+                @Html.EditorFor(model => model.TEN_KHOI, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TEN_KHOI, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-sm-4 col-md-4 col-lg-3">@Html.ActionLink("Quay lại", "Index")</div>
+            <div class="col-sm-8 col-md-7 col-lg-6">
+                <button type="submit" value="Save" class="btn btn-primary w-50"><i class="fa fa-save mr-2"></i>Save</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+}
+
+<div>
+    
+</div>

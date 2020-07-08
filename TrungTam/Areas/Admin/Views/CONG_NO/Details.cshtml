@@ -1,0 +1,186 @@
+﻿@model List<TrungTam.Areas.Admin.Abstracts.ChiTietCongNo>
+@{
+    ViewBag.Title = "Details";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+    var CT_CongNo = (List<TrungTam.Areas.Admin.Abstracts.ChiTietCongNo>)ViewBag.CT_CongNo;
+    var KhuyenMai = (List<TrungTam.Areas.Admin.Models.KHUYEN_MAI>)ViewBag.KhuyenMai;
+    Nullable<decimal> tong = 0;
+
+    string malop = "";
+    int lay = 0;
+}
+
+<h2 class="Title_Content">Chi Tiết Học Phí</h2>
+<div class="container">
+    <div>
+
+        <form role="form" action="/CONG_NO/Create" method="post">
+            @Html.AntiForgeryToken();
+            <div style="background-color:red;color:black;font-size:medium" class="col-sm-3 p-2 text-white mb-2">Chọn khuyến mãi để thanh toán</div>
+            <div>
+                <select class="custom-control" name="khuyenmai" id="khuyenmai">
+                    <option value="0">Không có</option>
+                    @if (KhuyenMai != null)
+                    {
+                        foreach (var i in KhuyenMai)
+                        {
+                            <option value="@i.MA_KM">@i.TEN_KM</option>
+                        }
+                    }
+                </select>
+
+            </div>
+            <div class="pt-3"> <label class="text-primary">Ngày thanh toán:</label> @DateTime.Now</div>
+           
+                <table class="table table-bordered table-hover table-responsive">
+                    <thead class="text-white bg-primary">
+                        <tr>
+                            <th>Tên lớp</th>
+                            <th>Tên môn</th>
+                            <th>Tên loại</th>
+                            <th>Tên khối</th>
+                            <th>Giá tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (CT_CongNo != null)
+                        {
+                            foreach (var i in CT_CongNo)
+                            {
+
+                                malop += i.malop.ToString();
+                                lay++;
+                                <tr>
+                                    <td>@i.tenlop</td>
+                                    <td>@i.tenmon</td>
+                                    <td>@i.tenloai</td>
+                                    <td>@i.tenkhoi</td>
+                                    <td><input type="hidden" name="@i.malop" value="@i.giatien" />@string.Format("{0:0,0}", i.giatien)</td>
+                                    @{tong += i.giatien;}
+                                </tr>
+                            }
+
+                        }
+                    </tbody>
+                </table>
+         
+
+            <input type="hidden" name="malop" id="malop" value="@malop" />
+            <input type="hidden" name="lay" value="@lay" />
+            <div id="ten"></div>
+            @{var a = double.Parse(tong.ToString());}
+            <div class="col-5 p-2" id="tien"><input type="hidden" name="tongtien" id="tongtien" value="@a" /><span class="text-danger">Tổng tiền: </span>@string.Format("{0:0,0}", tong)</div>
+            @if (CT_CongNo != null)
+            {
+                <input type="hidden" id="mahocsinh" value="@CT_CongNo[0].mahs" />
+            }
+            @if (CT_CongNo != null)
+            {
+                <input type="hidden" id="macongno" value="@CT_CongNo[0].macongno" />
+            }
+            <button class="btn btn-danger" type="button" id="thanhtoan" value="">Thanh toán</button>
+        </form>
+
+    </div>
+</div>
+
+@section ClientScript{
+    <script>
+
+        $('#khuyenmai').change(function () {
+            //var token = $("[name='__RequestVerificationToken']").val();
+            var khuyenmai = $('#khuyenmai').val();
+            if (khuyenmai != "0") {
+                $.ajax({
+                    url: "/Admin/CONG_NO/KhuyenMai",
+                    data: {
+        
+                        km: khuyenmai
+                    },
+                    dataType: "JSON",
+                    type: "POST",
+                    success: function (res) {
+                        $('#tien').remove();
+                         $('#tiengiam').remove();
+                        //$(res).each(function (i, e) {
+                            var tong = @a - (@a * res[0] / 100);
+                                var di = "<div class='col-5' id='tien'><input type='hidden' name='tongtien' id='tongtien' value='" + tong + "' />Tổng tiền:"  + tong + "</div>";
+                            $('#ten').append(di);
+                                var dic = "<div class='col-5' id='tiengiam'>Tiền giảm:"  + res[0] + "%</div>";
+                            $('#tien').append(dic);
+                        //});
+                    }
+                })
+            }
+            else {
+                $('#tien').remove();
+                $('#tiengiam').remove();
+                  var di = "<div class='col-5' id='tien'><input type='hidden' name='tongtien' id='tongtien' value='" + @a + "' />Tổng tiền:"  + @a + "</div>";
+                  $('#ten').append(di);
+            }
+        });
+        $('#thanhtoan').click(function () {
+            bootbox.confirm({
+                message: "Bạn có chắc thanh toán hoá đơn hay không?",
+                buttons: {
+                    confirm: {
+                        label: "Có",
+                        className: "btn-success"
+                    },
+                    cancel: {
+                        label: "Không",
+                        className: "btn-danger"
+                    }
+                },
+                callback: function (result) {
+                    var token = $("[name='__RequestVerificationToken']").val();
+                    //var mahocsinh = $('#mahocsinh').val();
+                    var macongno = $('#macongno').val();
+                    var makm = $('#khuyenmai').val();
+                    var tongtien = $('#tongtien').val();
+                    if (result) {
+                            @*location.href = '@Url.Action("Payment", "CONG_NO")';*@
+                        try {
+                            $.ajax({
+                            url: "/Admin/CONG_NO/Payment",
+                            type: "POST",
+                            dataType:"Json",
+                            data: {
+                                __RequestVerificationToken: token,
+                                tong: tongtien,
+                                macn: macongno,
+                                makm: makm
+                            },
+                                success: function (res) {
+                                    $(res).each(function (i, e) {
+                                        bootbox.alert({
+                                            message: "Thanh toán thành công hoá đơn ",
+                                            callback: function () {
+                                                location.href = '@Url.Action("Index", "CONG_NO")';
+                                            }
+                                        });
+                                    });
+
+                                },
+                                error: function () {
+                                    bootbox.alert("Thanh toán không thành công hoá đơn ");
+                                    }
+                        });
+                        } catch (e) {
+                            bootbox.alert("Lỗi vui lòng thử lại sau!!!");
+                        }
+
+                    }
+                }
+            });
+        });
+    </script>
+}

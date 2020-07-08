@@ -1,0 +1,120 @@
+﻿@*@model IEnumerable<TrungTam.Areas.Admin.Models.KHOI_LOP>*@
+@model PagedList.IPagedList<TrungTam.Areas.Admin.Models.KHOI_LOP>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">Thêm Khối Lớp</button>
+<div class="card-body">
+    
+    <table class="table table-bordered table-responsive table-hover myTable text-center">
+        <thead class="text-white bg-primary text-center">
+            <tr>
+                <th class="nowrap">
+                    <span class="mr-1">Mã Khối Lớp</span>
+
+                </th>
+                <th>Tên Khối Lớp</th>
+                <th><em class="fa fa-cog"></em></th>
+            </tr>
+        </thead>
+        <tbody id="tableDanhSach">
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MA_KHOI)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TEN_KHOI)
+                </td>
+                <td>
+
+                    <a href="~/Admin/KHOI_LOP/Edit/@item.MA_KHOI" class="btn btn-warning"> Sửa @*@Html.ActionLink("Sửa", "Edit", new { id = item.MA_KHOI })*@ </a>
+
+
+                    <button type="button" name="xoa" class="btn btn-danger xoa" id="xoa" value="@item.MA_KHOI">Xoá</button>
+                </td>
+            </tr>
+            }
+
+    </table>
+    @Html.PagedListPager(Model, page =>Url.Action("Index", new { page}))
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title " id="exampleModalLabel">Thông Khối Lớp</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/KHOI_LOP/Create" method="post" role="form" onsubmit="return themKhoi()">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                            </div>
+                            <input type="text" name="tenkhoi" id="tenkhoi" class="form-control input-sm" placeholder="Khối lớp ">
+                        </div>
+                        <span class="sp-thongbao" id="tbKhoi"></span>
+                    </div>                   
+                    <div class="modal-footer" id="modal-footer">
+                        <button id="btnThemNV" type="submit" class="btn btn-success">Thêm Khối</button>                        
+                        <button id="btnDong" type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Modal footer -->
+
+        </div>
+    </div>
+</div>
+<script>
+         $('table tbody').on('click', 'button.xoa', function () {
+            //var token = $("[name='__RequestVerificationToken']").val();
+                   var makhoi = $(this).closest('tr').find('button[name="xoa"]').val();
+            bootbox.confirm({
+                message: "Bạn có chắc muốn xoá không?",
+                buttons: {
+                    confirm: {
+                        label: "Có",
+                        className: "btn btn-danger"
+                    },
+                    cancel: {
+                        label: "Không",
+                        className: "btn btn-success"
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/KHOI_LOP/Delete",
+                            data: { makhoi: makhoi },
+                            type: "POST",
+                            success: function (response) {
+                                if (response == "1") {
+                                    bootbox.alert({ message: "Xoá thành công", callback: function () { location.reload() } });
+                                } else {
+                                    bootbox.alert("Khối lóp bạn đang xoá đã sử dụng bảng học phí! Vui lòng xoá khối lớp khác");
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+        });
+</script>

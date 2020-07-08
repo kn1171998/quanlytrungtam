@@ -1,0 +1,350 @@
+﻿@model TrungTam.Areas.Admin.Models.LOP_HOC
+
+@{
+    ViewBag.Title = "Details";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+    var list_hocsinh = (List<TrungTam.Areas.Admin.Abstracts.Hoc_Sinh>)ViewBag.list_hocsinh;
+    var listTKB = (List<TrungTam.Areas.Admin.Abstracts.ThoiKhoaBieu>)ViewBag.listTKB;
+    string[] mangThu = { "CN", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7" };
+}
+
+<h2 class="Title_Content">Chi Tiết</h2>
+<script>
+    var mangThu = new Array("CN", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7");
+    var m = document.getElementById("thu");
+
+    for (var i = 0; i < mangThu.length; i++) {
+        var option = document.createElement("option"), txt = document.createTextNode(mangThu[i]);
+        option.setAttribute("value", i);
+        option.appendChild(txt);
+        m.insertBefore(option, m.lastChild);
+    }
+</script>
+<div class="col-sm-12">
+    <hr />
+    <div class="row ">
+        <div col-2></div>
+        <div id="hoten" class="col-6 ">
+            <label class='input-group-text bg-primary text-white' for='inputGroupSelect01'>Giáo viên : @Model.GIAO_VIEN.HO_TEN </label>
+        </div>
+        <div id="sdt" class="col-6 ">
+            <label class='input-group-text bg-primary text-white' for='inputGroupSelect01'>Điện thoại : @Model.GIAO_VIEN.SDT</label>
+        </div>
+    </div>
+    <div class="row ">
+        <div col-2></div>
+        <div id="hoten" class="col-6 ">
+            <label class='input-group-text bg-primary text-white' for='inputGroupSelect01'>Tên lớp : @Model.TEN_LOP</label>
+        </div>
+        <div id="sdt" class="col-6 ">
+            <label class='input-group-text bg-primary text-white' for='inputGroupSelect01'>Loại lớp : @Model.BANG_GIA_HOC_PHI.LOAI_LOP.TEN_LOAI</label>
+        </div>
+    </div>
+    <hr>
+    <div class="form-group">
+        <div class="ui-widget">
+            <label for="tenhocvien" class="text-white bg-primary p-1 m-0">Học viên</label>
+            <input class="col-sm-2" type="text" name="tenhocvien" id="tenhocvien" value="" />
+            <button type="button" id="timkiem"><i class="fas fa-search"></i></button>
+        </div>
+
+    </div>
+    <br />
+    @*ẩn hiện kết quả tìm kiếm*@
+    <div style="display:none;" id="ketquatim">
+        <h4>Kết quả tìm kiếm</h4>
+        <table class="table table-bordered table-hover table-responsive" id="ketquatimkiem">
+            <thead class="text-white bg-primary">
+                <tr>
+                    <th class="nowrap">
+                        <span class="mr-1">Mã học viên</span>
+                    </th>
+                    <th class="nowrap">
+                        <span class="mr-1">Họ tên</span>
+                    </th>
+                    <th class="nowrap">
+                        <span class="mr-1">SDT Phụ huynh</span>
+                    </th>
+                    <th class="nowrap">
+                        <span class="mr-1"></span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="danhsachTimkiem"></tbody>
+        </table>
+    </div>
+    <div>
+        <h4>Danh sách học viên</h4>
+        <table class="table table-bordered table-hover" id="danhsachhocvien">
+            <thead class="text-white bg-primary">
+                <tr>
+                    <th class="nowrap">
+                        <span class="mr-1">Mã học viên</span>
+                    </th>
+                    <th class="nowrap">
+                        <span class="mr-1">Họ tên</span>
+                    </th>
+                    <th class="nowrap">
+                        <span class="mr-1">Ngày sinh</span>
+                    </th>
+                    <th class="nowrap">
+                        <span class="mr-1">Giới tính</span>
+                    </th>
+                    <th class="nowrap">
+                        <span class="mr-1">SDT Phụ huynh</span>
+                    </th>
+                    <th class="nowrap">
+                        <span class="mr-1">Phụ huynh</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (list_hocsinh != null)
+                {
+                    foreach (var item in list_hocsinh)
+                    {
+                        <tr>
+                            <td>
+                                @item.mahs
+
+                            </td>
+                            <td>
+                                @item.hoten
+                            </td>
+                            <td>
+                                @item.ngaysinh.ToString("dd/MM/yyyy")
+                            </td>
+                            <td>
+                                @item.gioitinh
+                            </td>
+                            <td>
+                                @item.sdt
+                            </td>
+                            <td>
+                                @item.phuhuynh
+                            </td>
+                            <td><button name="xoa" id="xoa" class="btn btn-danger xoa" value="@item.mahs">Xoá</button></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+    </div>
+    <br />
+    @using (Html.BeginForm("EditThoiKhoaBieu", "LOP_HOC"))
+    {
+        @*<form action="/Admin/">*@
+        @Html.AntiForgeryToken()
+        <div>
+            @*<div>
+                    <select class="form-control" name="thu" id="thu"></select>
+                </div>*@
+            <input type="hidden" name="malop" value="@Model.MA_LOP" />
+            <table class="table table-bordered table-hover">
+                <thead class="text-white bg-primary">
+                    <tr>
+                        <th>Thứ</th>
+                        <th>Thời gian bắt đầu</th>
+                        <th>Thời gian kết thúc</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var i in listTKB)
+                    {
+                        <tr>
+                            <td>
+                                <select class="form-control" name="thu_@i.thu@i.tgbt@i.matkb">
+                                    @for (int j = 0; j < mangThu.Length; j++)
+                                    {
+                                        if (j == i.thu)
+                                        {
+                                            <option value="@i.thu" selected>@mangThu[j]</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@j">@mangThu[j]</option>
+                                        }
+                                    }
+                                </select>
+
+                            </td>
+                            @*<td>@String.Format(new System.Globalization.CultureInfo("vi-VN"),"{0:g}", i.tgbt)</td>
+                                <td>
+                                    @String.Format(new System.Globalization.CultureInfo("vi-VN"),"{0:g}", i.tgkt)
+                                </td>*@
+
+                            <td><input name="tgbd_@i.thu@i.tgbt@i.matkb" type="time" class="form-control input-sm" value="@i.tgbt" /></td>
+                            <td><input name="tgkt_@i.thu@i.tgbt@i.matkb" type="time" class="form-control input-sm" value="@i.tgkt" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-danger">Lưu</button>
+        </div>
+        @*</form>*@
+    }
+</div>
+<section>
+
+    @*trường hợp thêm html vào sau khi load trang lệnh click không ăn*@
+    <script>
+         $("table tbody").on("click", "button.xoa" ,function () {
+            var mahs = $(this).closest('tr').find('button[name="xoa"]').val();
+            var malop = "@Model.MA_LOP";
+            var tong = mahs + '_' + malop;
+            //console.log(sum);
+            $.ajax({
+                url: "/Admin/LOP_HOC/Delete",
+                type: "POST",
+                dataType: "JSON",
+                traditional: true,
+                data: {
+                   tong:tong
+                },
+                //contentType: "application/json; chartset=utf-8",
+                success: function (response) {
+                    if (response == "1") {
+                        bootbox.alert({
+                            message: "xóa thành công",
+                            callback: function () {
+                                location.reload()
+                            }
+                        });
+                    }
+                    else {
+                        bootbox.alert({
+                            message: "Không xóa được",
+                            callback: function () {
+                                location.reload()
+                            }
+                        });
+                    }
+                },
+                error: function () {
+                    bootbox.alert("Xoá không thành công");
+                }
+            });
+        });
+        $("table tbody").on("click", "button.themvaolop" ,function () {
+            //var mahs = $('#mahs').val();
+            //var malop = $('#malop').val();
+            var malop = $(this).closest('tr').find('input[name="malop"]').val();
+            var mahs = $(this).closest('tr').find('input[name="mahs"]').val();
+            var tong = mahs + malop;
+            //console.log(sum);
+            $.ajax({
+                url: "/LOP_HOC/Add",
+                type: "POST",
+                dataType: "JSON",
+                traditional: true,
+                data: { tong: tong },
+                //contentType: "application/json; chartset=utf-8",
+                success: function (response) {
+                       if (response != null) {
+                     
+                           if (response == "1") {
+                        bootbox.alert({
+                            message: "Thêm vào lớp thành công",
+                            callback: function () {
+                                location.reload();
+                            }
+                        });
+                           } else if (response == "0") {
+                        bootbox.alert({
+                            message: "Học sinh đã tồn tại trong lớp",
+                            callback: function () {
+                                location.reload();
+                            }
+                        });
+                           } else if (response == "-1") {
+                        bootbox.alert({
+                        message: "Lớp đã kết thúc không thể thêm",
+                        callback: function () {
+                                location.reload();
+                        }
+                    });
+                           }
+                           else {
+                               bootbox.alert({
+                                   message: "'Học sinh này bị trùng giờ học",
+                                   callback: function () {
+                                       //location.reload();
+                                   }
+                               });
+                           }
+                    
+                    }
+
+
+                },
+                error: function () {
+                    bootbox.alert("Thêm vào lớp không thành công");
+                }
+            });
+        });
+        $("#timkiem").click(function () {
+            var ten = $("#tenhocvien").val();
+            var malop = "@Model.MA_LOP";
+            var search = malop + ten;
+            console.log(search);
+            if (ten != '') {
+                $.ajax({
+                url: "/LOP_HOC/Search",
+                type: "POST",
+                dataType: "JSON",
+                traditional: true,
+                data: { search: search },
+                success: function (response) {
+                    $("#ketquatim").show();
+                    $('table tbody').find('button[id="themvaolop"]').each(function () {
+                        $(this).parents("tr").remove();
+                    });
+                    if (response != null) {
+                        $(response).each(function (i, e) {
+                        var td = "<tr><td><input type='hidden' id='mahs' name='mahs' value='" + e.mahs + "' />" + e.mahs + "</td><td><input type='hidden' id='malop' name='malop' value='@Model.MA_LOP' />" + e.hoten + "</td><td>" + e.sdt + "</td><td><button class='btn btn-primary themvaolop' type='button' id='themvaolop'>Thêm</button></td></tr>";
+                        $("#danhsachTimkiem").append(td);
+                    });
+                    }
+                }
+            })
+            }
+        });
+        $("#tenhocvien").autocomplete({
+            minLength:0,
+            source: function (request, response) {
+                $.ajax({
+                    url: "/LOP_HOC/ListName",
+                    dataType: "json",
+                    data: {
+                        q: request.term
+                    },
+                    success: function (res) {
+                        response(res.data)
+                    }
+                });
+            },
+            focus: function (event, ui) {
+                $("#tenhocvien").val(ui.item.label);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#tenhocvien").val(ui.item.label);
+                return false;
+            }
+        })
+            .autocomplete("instance")._renderItem = function (ul, item) {
+                return $("<li>").append(item.label)
+                    .appendTo(ul);
+            };
+    </script>
+</section>

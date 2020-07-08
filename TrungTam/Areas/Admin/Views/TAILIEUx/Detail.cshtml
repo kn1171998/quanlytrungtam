@@ -1,0 +1,175 @@
+﻿@model PagedList.IPagedList<TrungTam.Areas.Admin.Models.TAILIEU>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "TaiLieuGV";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('2'))
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout_gv.cshtml";
+    }
+    var monhoc = (List<TrungTam.Areas.Admin.Models.MON_HOC>)ViewBag.monhoc;
+    var stt = 0;
+
+}
+<div class="card-body container">
+    <h2 class="text-center">Tài liệu tham khảo</h2>
+
+    <!-- Button trigger modal -->
+    @*=================================================================*@
+
+    <div class="row">
+        <div class="col-6">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text text-white bg-primary" for="inputGroupSelect01">Khối</label>
+                </div>
+                <select class="custom-select" id="cb_khoi" name="cb_khoi">
+                    <option selected value="0">Chọn khối</option>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text text-white bg-primary" for="inputGroupSelect01">Môn học</label>
+                </div>
+                <select class="custom-select" id="cb_monhoc">
+                    <option selected value="0">Chọn môn</option>
+                    @foreach (var item in monhoc)
+                    {
+                        <option value="@item.MA_MON">@item.TEN_MON</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered table-hover" id="listTL">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th>
+                    STT
+                </th>
+                <th>
+                    Môn học
+                </th>
+                <th>
+                    Khối
+                </th>
+                <th>
+                    Tài liệu
+                </th>
+                <th>
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        <tbody id="list_ds">
+            @foreach (var item in Model)
+            {
+
+                stt++;
+                <tr>
+                    <td>
+                        @stt
+                    </td>
+                    <td>
+                        @item.MON_HOC.TEN_MON
+                    </td>
+                    <td>
+                        @item.KHOI
+                    </td>
+                    <td>
+                        @item.TENTL
+                    </td>
+                    <td>
+                        <a id="btn_details" class="btn btn-success" href="@item.LINK" target="__blank">Xem tài liệu</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+</div>
+<section>
+    <script>
+        $('#cb_khoi').change(function () {
+            $("#list_ds").html("");
+            var khoi = $("#cb_khoi").val();
+            var mon = $("#cb_monhoc").val();
+            //if (khoi != "0") {
+                $.ajax({
+                    url: "/TAILIEUx/LoadKhoi",
+                    data: { khoi: khoi,  mon: mon},
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        var stt = 1;
+                        $(response).each
+                            (
+                            function (i, e) { //duyet mang doi tuong
+                                var tr = $("<tr/>");
+                                $("<td/>").html(stt).appendTo(tr);//bo sung <td> vao <tr>
+                                $("<td/>").html(e.MONHOC).appendTo(tr);
+                                $("<td/>").html(e.KHOI).appendTo(tr);//bo sung <td> vao <tr>
+                                $("<td/>").html(e.TENTL).appendTo(tr);
+                                    $("<td/>").html("<a id='btn_details' class='btn btn-success' href=" + e.LINK + " target='__blank'>Xem tài liệu</a>").appendTo(tr);
+                                tr.appendTo("tbody#list_ds");// bo sung <tr> vao <tbody>
+                                stt++;
+                            });
+                    }
+                });
+            //}
+        });
+    </script>
+    <script>
+        $('#cb_monhoc').change(function () {
+            $("#list_ds").html(""); 
+            var khoi = $("#cb_khoi").val();
+            var mon = $("#cb_monhoc").val();
+            //if (mon != "0") {
+                $.ajax({
+                    url: "/TAILIEUx/LoadKhoi",
+                    data: { khoi: khoi, mon: mon },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        var stt = 1;
+                        $(response).each
+                            (
+                            function (i, e) { //duyet mang doi tuong
+                                var tr = $("<tr/>");
+                                $("<td/>").html(stt).appendTo(tr);//bo sung <td> vao <tr>
+                                $("<td/>").html(e.MONHOC).appendTo(tr);
+                                $("<td/>").html(e.KHOI).appendTo(tr);//bo sung <td> vao <tr>
+                                $("<td/>").html(e.TENTL).appendTo(tr);
+                                    $("<td/>").html("<a id='btn_details' class='btn btn-success' href=" + e.LINK + " target='__blank'>Xem tài liệu</a>").appendTo(tr);
+                                tr.appendTo("tbody#list_ds");// bo sung <tr> vao <tbody>
+                                stt++;
+                            });
+                    }
+                });
+            //}
+        });
+    </script>
+</section>
+<section>
+    <script>
+        window.onload = function () {
+            if (@id.ToString().First().Equals('2')) {
+                alert("hello");
+                $("#them").hide();
+                $("#btn_detail").hide();
+            }
+        }
+    </script>
+</section>

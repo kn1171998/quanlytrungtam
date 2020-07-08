@@ -1,0 +1,124 @@
+﻿@model IEnumerable<TrungTam.Areas.Admin.Models.HOC_SINH>
+
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+    var nam = DateTime.Now.Year;
+    var thang = DateTime.Now.Month;
+}
+<style>
+    /*.my-custom-scrollbar {
+        position: relative;
+        height: 200px;
+        overflow: auto;
+    }
+
+    .table-wrapper-scroll-y {
+        display: block;
+    }*/
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_asc:before,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_asc_disabled:before,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:before {
+        bottom: .5em;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $('#dtVerticalScrollExample').DataTable({
+            //"scrollY": "200px",
+            //"scrollCollapse": true,
+        });
+        //$('.dataTables_length').addClass('bs-select');
+    });
+</script>
+<h2>Đánh giá cuối tháng</h2>
+<hr />
+@*<div><input class="form-control-sm" type="text" id="datepicker" name="datepicker" value="@DateTime.Now.ToString("dd/MM/yyyy")" disabled /></div>*@
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn tháng</label>
+    </div>
+    <select class="custom-select" name="thang" id="thang">
+        @*<option value="0"> Chọn tháng cần tính lương </option>*@
+        @for (int item = 1; item < 13; item++)
+        {
+            if (item == thang)
+            {
+                <option selected value="@item"> @item </option>
+            }
+            else
+            {
+                <option value="@item"> @item </option>
+            }
+        }
+    </select>
+    <div class="input-group-prepend">
+        <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn năm</label>
+        <select class="custom-select" name="nam" id="nam">
+            <option value="@nam">@nam </option>
+
+            @for (int item = 2019; item < nam; item++)
+            {
+                <option value="@item"> @item </option>
+            }
+        </select>
+    </div>
+</div>
+<table id="dtVerticalScrollExample" class="table table-bordered table-responsive table-hover" @*id="listHS"*@>
+    <thead class="text-center bg-primary text-white">
+        <tr>
+            <th>Họ tên</th>
+            <th>SĐT Phụ huynh</th>
+            <th>Phụ huynh</th>
+            <th>Địa chỉ</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="row">
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.HO_TEN</td>
+                    <td>@item.SDT_PH</td>
+                    <td>@item.PHU_HUYNH</td>
+                    <td>@item.DIA_CHI<input type="hidden" name="mahs" value="@item.MA_HS" /></td>
+                    <td><button class="btn btn-danger xuat" id="xuat">Xuất phiếu học tập</button></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+@section ClientScript{
+    <script>
+
+        $('table tbody').on('click', 'button.xuat', function () {
+            var mahs = $(this).closest('tr').find('input[name="mahs"]').val();
+            var thang = $('#thang').val();
+            var nam = $('#nam').val();
+            var date1 = thang + '_' + nam;
+            var redirectwindow = window.open('@Url.Action("PrintReportMonth","DANH_GIA_CUOI_THANG")?id=' + mahs + '&date=' + date1, '_blank');
+            redirectwindow.location;
+
+        });
+    </script>
+    
+}

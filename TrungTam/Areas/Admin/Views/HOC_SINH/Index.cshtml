@@ -1,0 +1,275 @@
+﻿ 
+@model IEnumerable<TrungTam.Areas.Admin.Models.HOC_SINH>
+  
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+<style>
+    /*.my-custom-scrollbar {
+        position: relative;
+        height: 200px;
+        overflow: auto;
+    }
+
+    .table-wrapper-scroll-y {
+        display: block;
+    }*/
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_asc:before,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_asc_disabled:before,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:before {
+        bottom: .5em;
+    }
+</style>
+<h2 class="Title_Content">Danh Sách Học Viên</h2>
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">Thêm học viên</button>
+<div class="card-body">
+    <table id="dtVerticalScrollExample"  class="table table-bordered table-responsive table-hover myTable">
+        <thead class="text-white bg-primary text-center" >
+            <tr>
+                <th>Họ và tên</th>
+                <th>Ngày sinh</th>
+                <th>Giới tính</th>
+                <th>Ngày vào học</th>
+                <th>Khối</th>
+                <th>Trường</th>
+                <th>Các môn đk</th>
+                <th>Số ĐT</th>
+                <th>Phụ huynh</th>
+                <th>Số ĐT phụ huynh</th>
+                <th>Địa chỉ</th>
+                <th><em class="fa fa-cog"></em></th>
+            </tr>
+        </thead>
+        <tbody id="tableDanhSach">
+            @foreach (var item in Model)
+            {
+                //using (Html.BeginForm("Delete", "HOC_SINH", new { id = item.MA_HS }))
+                //{
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HO_TEN)
+                    </td>
+                    <td>
+                        @item.NG_SINH.ToShortDateString()
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GIOI_TINH)
+                    </td>
+                    <td>
+                        @item.NG_VAO_HOC.Value.ToShortDateString()
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.KHOI)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TRUONG)
+                    </td>
+                     <td>
+                        @Html.DisplayFor(modelItem => item.MON_DK)
+                    </td>
+                    <td>
+                        @item.SDT.Trim()
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PHU_HUYNH)
+                    </td>
+                    <td>
+                        @item.SDT_PH.Trim()
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DIA_CHI)
+                    </td>
+                    <td>
+                        <a id="btnCapNhatNV" class="btn btn-warning" href="~/Admin/HOC_SINH/Edit/@item.MA_HS">Sửa</a>
+                        <a class="btn btn-success text-white" href="~/Admin/HOC_SINH/ResetPass/@item.MA_HS" onclick="return confirm('Bạn chắc chắn muốn reset mật khẩu học sinh này ?');">
+                            Reset Pass
+                        </a>
+                        <a class="btn btn-danger" href="~/Admin/HOC_SINH/Delete/@item.MA_HS" onclick="return confirm('Bạn chắc chắn muốn xóa học sinh này ?');">Xóa</a>
+                    </td>
+                </tr>
+                @*}*@
+            }
+        </tbody>
+    </table>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title " id="exampleModalLabel">Thông Tin học viên</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="exampleModal1" role="form" action="/HOC_SINH/Create" method="post" onsubmit="return themHV()">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                            </div>
+                            <input type="text" name="name" id="name" class="form-control input-sm" placeholder="Họ và tên">
+                        </div>
+                        <span class="sp-thongbao" id="tbTen"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            <input type="date" name="ngaysinh" id="datepicker" class="form-control" placeholder="Ngày Sinh">
+                        </div>
+                        <span class="sp-thongbao" id="tbNgay"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                            </div>
+                            <select class="form-control" name="Gioitinh">
+                                <option>Nam</option>
+                                <option>Nữ</option>
+                            </select>
+                        </div>
+                        <span class="sp-thongbao" id="tbTen"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                            </div>
+                            <input type="text" name="phuhuynh" id="phuhuynh" class="form-control input-sm" placeholder="Phụ huynh">
+                        </div>
+                        <span class="sp-thongbao" id="tbphuhuynh"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                            </div>
+                            <input type="text" name="sdt_ph" id="sdtph" class="form-control input-sm" placeholder="SDT phụ huynh" required>
+                        </div>
+                        <span class="sp-thongbao" id="tbTen"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                            </div>
+                            <input type="number" name="khoi" id="khoi" class="form-control input-sm" placeholder="Khối">
+                        </div>
+                        <span class="sp-thongbao" id="tbkhoi"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                            </div>
+                            <input type="text" name="truong" id="truong" class="form-control input-sm" placeholder="Trường">
+                        </div>
+                        <span class="sp-thongbao" id="tbtruong"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                            </div>
+                            <input type="text" name="mondk" id="mondk" class="form-control input-sm" placeholder="Môn đăng kí">
+                        </div>
+                        <span class="sp-thongbao" id="tbmondk"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                            </div>
+                            <input type="tel" name="SDT" id="sdt" class="form-control input-sm" placeholder="Số điện thoại">
+                        </div>
+                        <span class="sp-thongbao" id="tbSDT"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                            </div>
+                            <input type="text" name="diachi" id="diachi" class="form-control input-sm" placeholder="Địa chỉ">
+                        </div>
+                        <span class="sp-thongbao" id="tbdiachi"></span>
+                    </div>
+                    <div class="modal-footer" id="modal-footer">
+                        <button id="btnThemNV" type="submit" class="btn btn-success">Thêm người dùng</button>
+                        <button id="btnDong" type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+        </div>
+        <!-- Modal footer -->
+
+    </div>
+</div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#dtVerticalScrollExample').DataTable({
+            //"scrollY": "200px",
+            //"scrollCollapse": true,
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+    $('#exampleModal1').validate({
+        rules: {
+            tel: {
+                required: true,
+                number: true, //  bắt buộc là kiểu số
+                digits: true,  // không được tồn tại số âm
+            }
+        },
+        messages: {
+            required: "Xin vui lòng nhập số điện thoại !",
+            number: "Số điện thoại bắt buộc là kiểu số !",
+            digits: "Số điện thoại không được nhập số âm !"
+        }
+    });
+</script>
+<section>
+    <script>
+        $('#sdtph').blur(function () {
+            var sdt = $('#sdtph').val();
+            if (sdt != "") {
+                $.ajax({
+                        url: "/HOC_SINH/checkTaiKhoan",
+                        data: { id: sdt },
+                        dataType: "Json",
+                        type: "GET",
+                        success: function (response) {
+                            if (response == "1") {
+                            bootbox.alert("SDT phụ huynh này đã tồn tại!, Vui lòng đổi số khác hoặc thêm KÝ TỰ phân biệt ở cuối!");
+                        }
+                    }
+                });
+            }
+            else {
+                bootbox.alert("Không được để trống SDT phụ huynh!");
+            }
+        });
+    </script>
+</section>

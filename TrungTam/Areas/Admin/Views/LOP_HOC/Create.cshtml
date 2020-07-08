@@ -1,0 +1,382 @@
+﻿@model IEnumerable<TrungTam.Areas.Admin.Models.LOP_HOC>
+
+@{
+    ViewBag.Title = "Create";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+    var listkhoi = (List<TrungTam.Areas.Admin.Abstracts.HocPhi_Khoi>)ViewBag.listkhoi;
+    var listgiaovien = (List<TrungTam.Areas.Admin.Models.GIAO_VIEN>)ViewBag.listgiaovien;
+    var listbanghp = (List<TrungTam.Areas.Admin.Abstracts.BangHP_Khoi_Loai_Mon>)ViewBag.listbanghp;
+}
+<style>
+    /*.my-custom-scrollbar {
+        position: relative;
+        height: 200px;
+        overflow: auto;
+    }
+
+    .table-wrapper-scroll-y {
+        display: block;
+    }*/
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_asc:before,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_asc_disabled:before,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:before {
+        bottom: .5em;
+    }
+</style>
+<h2 class="Title_Content">Mở lớp</h2>
+<div class="container">
+
+    @*@Html.AntiForgeryToken()*@
+    <div class="well well-sm">
+        <h4 class="text-primary">Thông tin lớp</h4>
+        <hr />
+        <table id="dtVerticalScrollExample" cellspacing="0"
+               width="100%" class="table table-striped table-bordered table-hover myTable table-responsive">
+            <thead class="text-white bg-primary text-center">
+                <tr>
+                    <th class="th-sm">
+                        <span class="mr-1">Tên khối</span>
+                    </th>
+                    <th class="th-sm">Loại lớp</th>
+                    <th class="th-sm">Tên môn</th>
+                    <th class="th-sm">Đơn giá</th>
+                    <th class="th-sm">Số buổi</th>
+                    <th class="th-sm"><em class="fa fa-cog"></em></th>
+                </tr>
+            </thead>
+            <tbody id="tableBangHP">
+                @if (listbanghp != null) {
+                    foreach (var item in listbanghp)
+                    {
+                    <tr id="onRow">
+                        <td>
+                            @item.TEN_KHOI
+                            <input type="hidden" name="ngayad" value="@item.NGAYAD" />
+                        </td>
+                        <td>
+                            @item.TEN_MON
+
+                        </td>
+                        <td>
+                            @item.TEN_LOAI
+
+                        </td>
+                        <td>
+                            @string.Format("{0:0,0}", item.DON_GIA)
+                        </td>
+                        <td id="buoi">
+                            @item.SO_BUOI
+                        </td>
+                        <td>
+                            <input id="ChonBanghp" class="custom-radio" type="radio" name="banggia" value="@item.SO_BUOI" />
+                        </td>
+                    </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <div class="form-control-lg">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                </div>
+                <input type="text" name="tenlop" id="tenlop" class="form-control input-sm" placeholder="Tên lớp ">
+            </div>
+            <span class="sp-thongbao" id="tbTen"></span>
+        </div>
+        <div class="form-control-lg">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                </div>
+                <select class="form-control" id="magiaovien" name="magiaovien">
+                    @foreach (var item in listgiaovien)
+                    {
+                        <option value="@item.MA_GV">@item.HO_TEN</option>
+                    }
+                </select>
+            </div>
+            <span class="sp-thongbao" id="tbTen"></span>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-6">
+
+        @*======================*@
+        <h4 class="text-primary">Thời gian học</h4>
+        <br />
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                </div>
+                <select class="form-control" name="thu" id="thu"></select>
+            </div>
+            <span class="sp-thongbao" id="tbTen"></span>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                </div>
+                <input type="time" name="tgbd" id="tgbd" class="form-control input-sm" placeholder="Tên lớp ">
+            </div>
+            <span class="sp-thongbao" id="tbTen"></span>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                </div>
+                <input type="time" name="tgkt" id="tgkt" class="form-control input-sm" placeholder="Tên lớp ">
+            </div>
+            <span class="sp-thongbao" id="tbTen"></span>
+        </div>
+        <button class="btn btn-success mb-3" id="them" type="button">Thêm</button>
+        <button class="btn btn-danger mb-3" type="button" id="xoa">Xóa</button>
+        @*<button class="btn btn-warning" type="button" id="kiemtra_tkb">Kiểm tra</button>*@
+        <table class="table table-bordered table-hover myTable table-responsive" id="tkb">
+            <thead class="text-white bg-primary text-center">
+                <tr id="abc">
+                    <th class="nowrap">
+                        <span class="mr-1">Thứ</span>
+                    </th>
+                    <th>
+                        <span class="mr-1">Thời gian bắt đầu</span>
+                    </th>
+                    <th>
+                        <span class="mr-1">Thời gian kết thúc</span>
+                    </th>
+                    <th>
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="tableDanhSach1"></tbody>
+        </table>
+        <div id="MoLop" class="col-sm-6 MoLop">
+            <button class="btn btn-success" type="button" id="molop">Mở lớp</button>
+        </div>
+    </div>
+   
+    @*=========================*@
+    <div class="col-sm-6" id="ds">
+        <div id="tieudeDS">
+            <h4 id="tieudeDanhSach" class="text-primary">Danh sách lớp Thứ 2</h4>
+        </div>
+
+        <br />
+
+        <div style="overflow-y:auto; position:relative;">
+            <table id="dtVerticalScrollExample" class="table table-bordered table-striped mb-0 table-responsive">
+                <thead class="text-white bg-primary text-center">
+                    <tr>
+                        <th>Tên lớp</th>
+                        <th>Giáo viên phụ trách</th>
+                        <th>Bắt đầu</th>
+                        <th>Kết thúc</th>
+                    </tr>
+                </thead>
+                <tbody id="danhsachLop"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<section>
+    <script>
+        var mangThu = new Array("CN", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7");
+        var m = document.getElementById("thu");
+
+        for (var i = 0; i < mangThu.length; i++) {
+            var option = document.createElement("option"), txt = document.createTextNode(mangThu[i]);
+            option.setAttribute("value", i);
+            option.appendChild(txt);
+            m.insertBefore(option, m.lastChild);
+        }
+    </script>
+    <script>
+        $('#molop').click(function () {
+            bootbox.confirm({
+                title: "Thông báo",
+                message: "Bạn có muốn lưu hay không?",
+                buttons: {
+                    confirm: {
+                        label: 'Có',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Không',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        var banghp;
+                        var check = document.getElementsByName("banggia");
+                        var i = 0;
+                        var flag = false;
+                        $('#tableBangHP tr').each(function () {
+                            if (check[i].checked) {
+                                //var makhoi = $("input[name='khoi']:hidden").val();
+                                //var mamon = $("input[name='mon']:hidden").val();
+                                //var maloai = $("input[name='loai']:hidden").val();
+                                var tenlop = $("input[name='tenlop']").val();
+                                var magiaovien = $('#magiaovien').val();
+                                var ngayad = $(this).closest('tr#onRow').find('input[name="ngayad"]').val();
+                                //var ngayapdung = Date.parse(ngayad);
+                                //var ngayadFormat = ngayapdung.toString('dd/mm/yyyy HH:mm:ss');
+                                //console.log(ngayadFormat);
+                                banghp = { ngayad: ngayad, tenlop: tenlop, magiaovien: magiaovien };
+                                flag = true;
+                            }
+                            i++;
+                        });
+                        if (flag) {
+                            var tkb = [];
+                            var buoi = $("input[name='banggia']:checked").val();
+                            var dongtkb = $("#tkb tr").length;
+                            //console.log(dongtkb);
+                            if (buoi < dongtkb) {
+                                $('#tkb tr').each(function () {
+                                    //var thu = $(this).find("td").eq(0).html();
+                                    //var thu = $(this).find("thuvalue").eq(0).val();
+                                    var thu = $(this).closest('tr').find('input[name="thuvalue"]').val();
+                                    console.log(thu);
+                                    var tgbt = $(this).find("td").eq(1).html();
+                                    var tgkt = $(this).find("td").eq(2).html();
+                                    tkb.push({ thu: thu, tgbt: tgbt, tgkt: tgkt });
+                                });
+                                //var token = $('[name=__RequestVerificationToken]').val();
+                                var ajaxBangHP = JSON.stringify(banghp);
+                                var ajaxTKB = JSON.stringify(tkb);
+                                var all = JSON.stringify({ a: ajaxBangHP, b: ajaxTKB });
+                                $.ajax({
+                                    //method:Post
+                                    url: "/LOP_HOC/Create",
+                                    type: 'POST',
+                                    dataType: "JSON",
+                                    traditional: true,
+                                    data: all,
+                                    contentType: "application/json; chartset=utf-8",
+                                    success: function (response) {
+                                        bootbox.alert(
+                                            {
+                                                message: "Mở lớp thành công!",
+                                                callback: function () {
+                                                     location.href = '@Url.Action("Create", "LOP_HOC")';
+                                                }
+                                                });
+                                        //$('table tbody').find('input[name="record"]').each(function () {
+                                        //    $(this).parents("tr").remove();
+                                        //});
+
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                        bootbox.alert("Mở lớp thất bại!");
+                                    }
+                                });
+                            } else {
+                                bootbox.alert("Bạn chưa sắp đủ thời khóa biểu");
+                                banghp = null;
+                            }
+                        } else {
+                            bootbox.alert("Bạn chưa chọn giá học phí");
+                            banghp = null;
+                        }
+                    }
+                }
+            });
+        });
+        $('#them').click(function () {
+            var i = $("input[name='banggia']:checked").val();
+            if (i != null) {
+                var tkb = $("#tkb tr").length;
+                var thu = $('#thu').val();
+                var tenthu = mangThu[thu];
+                var tkbd = $('#tgbd').val();
+                var tgkt = $('#tgkt').val();
+                var magiaovien = $('#magiaovien').val();
+                //var magvtrung = $('#' + magiaovien).val();
+                //var tgbdtrung = $('#timebd' + magiaovien);
+                //var tgkttrung = $('#timekt' + magiaovien);
+                    if (tkbd < tgkt) { //kiể tra thời gian bd không thể nhỏ hơn thời gian kết thúc
+                        if (i >= tkb) { //Kiểm tra tuần 3 buổi
+                            var tb = document.getElementById("tableDanhSach1");
+                            var tr = document.createElement("tr");
+                            var td = "<tr id = 'tkb'><td>" + tenthu + "</td><input type='hidden' id='thuvalue' name = 'thuvalue' value ='" + thu + "' /><td>" + tkbd + "</td><td>" + tgkt + "</td><td><input type='checkbox' name='record' /></td></tr>";
+                            $('#tableDanhSach1').append(td);
+                        }
+                    }
+                    else {
+                        bootbox.alert("Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc");
+                    }
+            }
+            else {
+                bootbox.alert("Bạn chưa chọn bảng học phí");
+            }
+        });
+        $('#xoa').click(function () {
+            $('table tbody').find('input[name="record"]').each(function () {
+                if ($(this).is(":checked")) {
+                    $(this).parents("tr").remove();
+                }
+            });
+
+        });
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#dtVerticalScrollExample').DataTable({
+                "scrollY": "200px",
+                "scrollCollapse": true,
+            });
+            $('.dataTables_length').addClass('bs-select');
+        });
+        $('#thu').change(function () {
+            var thu = $('#thu').val();
+            $('table tbody').find('input[name="ab"]').each(function () {
+                $(this).parents("tr").remove();
+            });
+            $.ajax({
+                url: "/LOP_HOC/KIEM_TRA_TKB",
+                type: "POST",
+                dataType: "JSON",
+                traditional: true,
+                data: { thu: thu },
+                success: function (response) {
+                    var tenthu = mangThu[thu];
+                    var ten = "<h4 id='tieudeDanhSach'>Danh sách lớp " + tenthu + "</h4>";
+                    $('#tieudeDanhSach').remove();
+
+                    $(response).each(function (i, e) {
+                        //var td = "<tr><td>" + e.tenlop + "</td><td>" + e.thoigianbd.Hours + ":" + e.thoigiankt.Minutes + "</td><td>" + e.thoigiankt + "</td><input type='hidden' name='ab'></tr>";
+                        var td = "<tr><td>" + e.tenlop + "</td><td>" + e.tengv + "</td><td><input class='form-control input-sm' id='timebd" + e.magv
+                            + "' disabled type='time' value='" + e.thoigianbd + "' /></td><td><input class='form-control input-sm' disabled id='timekt"
+                            + e.magv + "' type='time' value='" + e.thoigiankt + "' /></td><input type='hidden' name='ab'><input type ='hidden' value='" +
+                            e.magv + "' id='"+ e.magv +"'></tr>";
+                        $('#danhsachLop').append(td);
+                    });
+                    $('#tieudeDS').append(ten);
+                }
+            });
+        });
+    </script>
+</section>

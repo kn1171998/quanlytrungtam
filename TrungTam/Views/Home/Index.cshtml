@@ -1,0 +1,753 @@
+﻿@model List<TrungTam.Areas.Admin.Models.BANG_GIA_HOC_PHI>
+@{
+    //var id = Session["ID"];
+    //if (id.ToString().First().Equals('9'))
+    //{
+    //    Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    //}
+    Layout = null;
+    var khuyenmai = (List<TrungTam.Areas.Admin.Models.KHUYEN_MAI>)ViewBag.khuyenmai;
+    var noidung = (List<TrungTam.Areas.Admin.Models.TRANG_CHU>)ViewBag.noidung;
+    var dsloai = Model.OrderBy(x => x.LOAI_LOP.TEN_LOAI).Select(t => t);
+    var loai = Model.OrderBy(x => x.LOAI_LOP.TEN_LOAI).Select(t => t.LOAI_LOP.TEN_LOAI).Distinct();
+    int cot = dsloai.Select(t => t.LOAI_LOP.TEN_LOAI).Distinct().Count();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Trung Tâm BDVH -- KHOA HỌC TRẢI NGHIỆM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/coliff/bootstrap-rfs/bootstrap-rfs.css">
+    <link rel="stylesheet" href="~/Asset/admin/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/Asset/admin/css/owl.carousel.min.css">
+    @*<link rel="stylesheet" href="~/Asset/admin/css/style.css">*@
+    @Scripts.Render("~/bundles/jquery")
+    @Styles.Render("~/Content/css")
+</head>
+
+<body>
+    <!-- header -->
+    <header class="  header">
+        <!--navbar-expand-md   giới hạn  khi xuất hiện nút  -->
+        <!-- bg-dark màu -->
+        <div class="container mynav">
+            <nav class="row navbar navbar-expand-lg navbar-line bg-line ">
+                <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+                <div class="col-sm-4 col-md-4 col-lg-3 col-5 "> <a href="#"><img src="~/Asset/admin/img/unnamed.png" class="w-100 h-100"></a> </div>
+
+                <div class="col-1" href="#DangKi">
+                    @*<span><i class="fa fa-paper-plane pb-4 pr-2"></i> Đăng kí</span>*@
+                </div>
+                <button class="navbar-toggler btn_menu p-2" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                </button>
+                <div class="col-8 ml-5 collapse navbar-collapse text-left" id="navbarSupportedContent">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item active">
+							<a class="nav-link" href="#">Trang Chủ <span class="sr-only">(current)</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#hocphi">Học Phí</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="~/Admin/GIA_SU/tuyengiasu">Gia Sư</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#lienhe">Liên Hệ</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#" data-toggle="modal" data-target="#exampleModalScrollable">Đăng Nhập</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#DangKi" >Ghi Danh</a>
+						</li>
+					</ul>
+
+                </div>
+
+            </nav>
+        </div>
+
+    </header>
+    <!-- Button trigger modal -->
+    <!-- Modal -->
+    <form action="~/Home/Login" method="post" onSubmit="return confirmLogin()">
+        <div class="modal fade " id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                <div class="modal-content ">
+                    <div class="modal-header mymodal pb-0">
+                        <h4 class="modal-title pb-3 text-center" id="exampleModalScrollableTitle">Đăng Nhập</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <input type="text" name="name" class="form-control mymodal" placeholder="Tên đăng nhập" />
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="password" name="pass" class="form-control mymodal" placeholder="Mật khẩu" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col-12 p-3 text-center">
+                            <button id="dangnhap" type="submit" class="btn btn-primary">Đăng Nhập</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Hủy</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- carousel -->
+    <section class=" myCarousel">
+        <div id="demo" class="carousel carousel-fade " data-ride="carousel" data-interval="2000">
+
+            <!-- Indicatorsô vuông nhỏ -->
+            <ul class="carousel-indicators">
+                <li data-target="#demo" data-slide-to="0" class="active"></li>
+                <li data-target="#demo" data-slide-to="1"></li>
+                <li data-target="#demo" data-slide-to="2"></li>
+            </ul>
+
+            <!-- The slideshow -->
+            <div class="carousel-inner col-12 col-sm-12 col-md-12">
+                <div class="carousel-item active">
+                    <img src="~/Asset/admin/img/ca11.jpg" class="img-fluid w-100 d-block" alt="Los Angeles">
+                    <div class="carousel_overlay"></div>
+                    <div class=" carousel_caption  text-white">
+
+                        <div class="row text-white">
+                            <h2 class="display-5 col-12 text-white d-block">TRUNG TÂM BDVH - KHOA HỌC TRẢI NGHIỆM</h2>
+                        </div>
+                        @foreach (var item in noidung)
+                        {
+                            <p>
+                                @item.MUC_TIEU
+                            </p>
+                            break;
+                        }
+
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="~/Asset/admin/img/ca12.jpg" class="img-fluid w-100 d-block" alt="Chicago">
+                    <div class="carousel_overlay"></div>
+                    <div class=" carousel_caption text-white">
+
+                        <div class="row">
+                            <div class="col-12"> <h2 class="text-white display-5 d-block">TRUNG TÂM BDVH - KHOA HỌC TRẢI NGHIỆM</h2></div>
+                        </div>
+
+                        @foreach (var item in noidung)
+                        {
+                            <p>
+                                @item.MUC_TIEU
+                            </p>
+                            break;
+                        }
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="~/Asset/admin/img/ca13.jpg" class="img-fluid w-100" alt="New York">
+                    <div class="carousel_overlay"></div>
+                    <div class=" carousel_caption text-white">
+
+                        <div class="row">
+                            <div class="col-12"> <h2 class="display-5 text-white">TRUNG TÂM BDVH - KHOA HỌC TRẢI NGHIỆM</h2></div>
+                        </div>
+                        @foreach (var item in noidung)
+                        {
+                            <p>
+                                @item.MUC_TIEU
+                            </p>
+                            break;
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <!-- giới thiệu -->
+    <section class="Gioithieu mt-5" id="GioiThieU">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-7"><img src="~/Asset/admin/img/agt.jpg" class="w-100 h-100" alt=""></div>
+                <div class="col-12 col-md-5 col-sm-12 content_text_gt">
+                    <h2 class="gt_detitle ">Giới Thiệu</h2>
+                    @foreach (var item in noidung)
+                    {
+                        <p>
+                            @item.GIOI_THIEU
+                        </p>
+                        break;
+                    }
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- end giới thiệu -->
+    <!-- Môn học -->
+    <section class="MonHoc mt-5" id="MonHoC">
+        <div class="container ">
+            <h2 class="tieude">Môn Học</h2>
+            <p class="mb-5 pl-5 pr-5">Hỗ trợ bồi dưỡng các môn TOÁN – LÝ – HOÁ – ANH cho học sinh từ lớp 6 đến lớp 12 và luyện thi THPTQG.</p>
+            <div class="row monhoc_icon">
+                <div class="col-md-3 toan monhoc_khung p-3 ">
+                    <div class="monhoc_content p-4">
+                        <i class="fa fa-calculator"></i>
+                        <h4 class="monhoc_detaitle p-2 ">Toán</h4>
+                    </div>
+                </div>
+                <div class="col-md-3 ly monhoc_khung p-3 ">
+                    <div class="monhoc_content p-3">
+                        <i class="fa fa-cogs"></i>
+                        <h4 class="monhoc_detaitle p-2">Lý</h4>
+                    </div>
+
+                </div>
+                <div class="col-md-3 hoa monhoc_khung p-3 ">
+                    <div class="monhoc_content p-4">
+                        <i class="fa fa-bomb"></i>
+                        <h4 class="monhoc_detaitle p-2">Hóa</h4>
+                    </div>
+
+                </div>
+                <div class="col-md-3 anh monhoc_khung p-3 ">
+                    <div class="monhoc_content p-3">
+                        <i class="fa fa-language"></i>
+                        <h4 class="monhoc_detaitle p-2">Anh</h4>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- end môn học -->
+    <!-- Mô hình học tập -->
+    <section class="MoHinh mt-5" id="MohinH">
+        <div class="container">
+            <h2 class="tieud pt-5">Mô Hình Học Tập</h2>
+            <p class="pl-5 pr-5 mb-4">
+
+                Mô hình học tập theo nhóm nhỏ giúp cho mọi nhu cầu học tập cá nhân được đáp ứng.
+                Nhóm nhỏ: 2 học sinh, 4 học sinh hoặc 10 học sinh.
+            </p>
+            <!-- học sinh -->
+            <div class="row owl-carousel owl-theme m-0">
+                <div class="col ">
+                    <img src="~/Asset/admin/img/tvm1.jpg" class="w-100 h-100 pb-2">
+                    <h4>10 Học Sinh</h4>
+                    <p>Mô hình học tập theo nhóm 10 học sinh.</p>
+                </div>
+                <div class="col ">
+                    <img src="~/Asset/admin/img/tvm2.jpg" class="w-100 h-100 pb-2" alt="">
+                    <h4>2 Học Sinh</h4>
+                    <p>Mô hình học tập theo nhóm 2 học sinh.</p>
+                </div>
+                <div class="col ">
+                    <img src="~/Asset/admin/img/tvm1.jpg" class="w-100 h-100 pb-2" alt="">
+                    <h4>4 Học Sinh</h4>
+                    <p>Mô hình học tập theo nhóm 4 học sinh.</p>
+
+                </div>
+                <div class="col ">
+                    <img src="~/Asset/admin/img/tvm7.jpg" class="w-100 h-100 pb-2" alt="">
+                    <h4>Học Sinh Tự Học</h4>
+                    <p>Tinh thần tự học được khuyến khích phát triển thông qua tổ chức buổi tự học có hướng dẫn hàng tuần ở các môn. </p>
+
+                </div>
+                <div class="col ">
+                    <img src="~/Asset/admin/img/tvm5.jpg" class="w-100 h-100 pb-2" alt="">
+                    <h4>Hỗ Trợ Học Sinh</h4>
+                    <p>
+                        Chương trình học tập thiết kế riêng cho cá nhân, phù hợp với mục tiêu cá nhân hiện tại.
+                        Thời khóa biểu được lựa chọn linh hoạt.
+                    </p>
+                </div>
+            </div>
+            <!-- lớp -->
+            <!-- <div class="col-5"></div> -->
+        </div>
+    </section>
+    <!-- end moo hinh -->
+    @*Học phí*@
+    <section class="Hocphi">
+        <div class="container  table-responsive" id="hocphi">
+            <h2 class="gt_detitle pt-5 text-center">Học Phí Ưu Đãi</h2>
+
+            <table style="background-image:url(../../Content/nen1.jpg)" class="table MoHinh table-bordered text-white text-center">
+
+                <thead>
+
+                    <tr class="bg-info">
+                        <th rowspan="2" colspan="2">Môn học</th>
+                        <th colspan="@cot">Học phí hàng tháng(ngàn đồng)</th>
+                    </tr>
+                    <tr class="bg-info">
+                        @foreach (var l in Model.OrderBy(x => x.LOAI_LOP.TEN_LOAI).Select(t => t.LOAI_LOP.TEN_LOAI).Distinct())
+                        {
+                            <th>@l</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody class="">
+                    @foreach (var k in Model.OrderBy(x => x.LOAI_LOP.TEN_LOAI).Select(t => new { tenkhoi = t.KHOI_LOP.TEN_KHOI, makhoi = t.MA_KHOI }).Distinct())
+                    {
+                        <tr>
+                            @{ //var col = Model.Where(t => t.MA_KHOI == k.makhoi).Select(t => t.MA_MON).Distinct().Count() + 1;
+                                var ds = Model.Where(t => t.MA_KHOI == k.makhoi).Select(t => new { mamon = t.MA_MON, buoi = t.SO_BUOI }).Distinct().ToList();
+                                //var dskt = ds.Where(t => t.mamon == )
+                                var col = ds.Count() + 1;
+                                int dem = 0;
+                                foreach (var kt in ds)
+                                {
+                                    dem += ds.Where(t => t.mamon == kt.mamon && t.buoi != kt.buoi).Select(t => t).Distinct().Count();
+                                }
+                                dem /= 2;
+                                col += dem;
+                                var dskhoi = Model.OrderBy(x => x.LOAI_LOP.TEN_LOAI).Where(t => t.MA_KHOI == k.makhoi).Select(t => new { mamon = t.MA_MON, tenmon = t.MON_HOC.TEN_MON, buoi = t.SO_BUOI }).Distinct();
+                            }
+                            <th rowspan="@col">@k.tenkhoi</th>
+                            @foreach (var m in dskhoi)
+                            {
+                            <tr>
+                                <th>@m.tenmon (@m.buoi Buổi/Tuần)</th>
+                                @{
+                                    var dsloaiduyet = Model.OrderBy(x => x.LOAI_LOP.TEN_LOAI).Select(t => new { tenloai = t.LOAI_LOP.TEN_LOAI, maloai = t.LOAI_LOP.MA_LOAI }).Distinct();
+                                    var monkhoi = Model.OrderBy(x => x.LOAI_LOP.TEN_LOAI).Where(t => t.MA_MON == m.mamon && t.MA_KHOI == k.makhoi).Select(t => t).Distinct();
+                                    ////System.Collections.ArrayList ls1 = new System.Collections.ArrayList();
+                                    //List<decimal[]> ls1 = new List<decimal[]>();
+                                    ////List<decimal> ls;
+                                    int cot1 = dsloaiduyet.Count(), dong = monkhoi.Count();
+                                    List<decimal> haha = new List<decimal>();
+                                    decimal[,] ls = new decimal[dong, cot1];
+                                    int i = 0;
+                                }
+                                @foreach (var g in monkhoi)
+                                {
+                                    // decimal[] ls = new decimal[dsloaiduyet.Count()];
+                                    int j = 0;
+                                    foreach (var dp in dsloaiduyet)
+                                    {
+
+                                        if (g.SO_BUOI == m.buoi && dp.maloai == g.MA_LOAI)
+                                        {
+                                            @*<td>@string.Format("{0:0,0}", g.DON_GIA)</td>*@
+                                            ls[i, j] = g.DON_GIA;
+                                        }
+                                        else if (g.SO_BUOI == m.buoi && dp.maloai != g.MA_LOAI)
+                                        {
+                                            ls[i, j] = 0;
+                                        }
+                                        j++;
+                                    }
+                                    i++;
+                                }
+                                @for (int d = 0; d < cot; d++)
+                                {
+                                    decimal sum = 0;
+                                    //decimal[] a = ls1[i] as decimal[];
+                                    //if (dong > cot)
+                                    //{
+                                    //    cot = cot - (dong - cot);
+                                    //}
+                                    //else { cot = cot - (cot - dong); }
+                                    for (int j = 0; j < dong; j++)
+                                    {
+                                        sum += ls[j, d];
+                                    }
+                                    haha.Add(sum);
+                                }
+                                @foreach (var h in haha)
+                                {
+                                    if (h == 0)
+                                    {
+                                        <td></td>
+                                    }
+                                    else
+                                    {
+                                        <td>@string.Format("{0:0,0}", h)</td>
+                                    }
+                                }
+                            </tr>
+                        }
+                            </tr>
+                        }
+                    <!-- THPT -->
+
+                </tbody>
+            </table>
+        </div>
+    </section>
+    @*end học phí*@
+    <!-- chính sách khuyến mãi -->
+    <section class="KhuyenMai mt-5" id="CSGHP">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-12 col-md-8 col-sm-12 p-3">
+                    <h2 class="tieude"> CHÍNH SÁCH GIẢM HỌC PHÍ </h2>
+                    <marquee behavior="" direction=""></marquee>
+                    <div class="text_KM">
+                        @foreach (var item in khuyenmai)
+                        {
+                            <h5>Đăng kí <span>@item.SO_MON_DK môn</span> </h5>
+                            <P>Đăng kí <span>@item.SO_MON_DK</span>  môn giảm <span>@item.TIEN_GIAM%</span> trên tổng học phí</P>
+                        }
+                        <h5> <span>Học sinh được học thử</span> </h5>
+                        <P>
+                            Được cung cấp tài liệu, dụng cụ học tập miễn phí.
+                            Được học thử 2 buổi miễn phí, hoàn trả 100% học phí nếu HS không hài lòng
+                        </P>
+                    </div>
+                </div>
+                <div class="col-0 col-sm-0 col-md-4">
+                    <img src="~/Asset/admin/img/tv6.jpg" class="w-100 h-100" alt="">
+                </div>
+                <div class="row">
+                    <div class="col-12"></div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+    <!-- end khuyến mãi -->
+    <!-- thuvienanh -->
+    <section class="thuvien mt-5 p-1">
+        <div class="container-fluid">
+            <h2 class="tieude m-1 pb-3">Hình Ảnh Lớp Học</h2>
+            <div class="row">
+                <div class="col-3">
+                    <img src="~/Asset/admin/img/tv10.jpg" class="w-100 h-100" alt="">
+                </div>
+                <div class="col-3">
+                    <img src="~/Asset/admin/img/tv11.jpg" class="w-100 h-100" alt="">
+                </div>
+                <div class="col-6">
+                    <img src="~/Asset/admin/img/tv12.jpg" class="w-100 h-100">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6">
+                    <img src="~/Asset/admin/img/tv8.jpg" class="w-100 h-100" alt="">
+                </div>
+                <div class="col-3">
+                    <img src="~/Asset/admin/img/tv6.jpg" class="w-100 h-100" alt="">
+                </div>
+                <div class="col-3">
+                    <img src="~/Asset/admin/img/that.jpg" class="w-100 h-100" alt="">
+                </div>
+            </div>
+        </div>
+
+
+    </section>
+    <!-- endthuvien -->
+    <!-- bản đồ -->
+    <form action="~/Home/ghidanh" method="post" onSubmit="return dangKi()">
+        <section class="diachi mt-0 pt-5 pb-5" id="DangKi">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-lg-6 col-md-12 col-sm-12  mt-3">
+                        <div class="p-3 form_dk ml-3">
+                            <h2 class="tieude mb-3 pt-1">Đăng Kí Tư Vấn</h2>
+                            <div class="content_dangki w-100 pl-3 ">
+                                <table class="w-100">
+                                    <tr class="w-100">
+                                        <td class="w-100">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-user"></i></span>
+                                                </div>
+                                                <input type="text" name="txt_hoten" id="txt_hoten" class="form-control" placeholder="Họ tên học viên" aria-label="Username" aria-describedby="basic-addon1">
+                                            </div>
+                                            <span class="sp-thongbao" id="tbTen"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                <input type="date" name="txt_ngaysinh" id="txt_ngaysinh" class="form-control" placeholder="Ngày sinh" aria-label="Username" aria-describedby="basic-addon1">
+                                            </div>
+                                            <span class="sp-thongbao" id="tbNgay"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            @*<div class="input-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon1"><i class="fa fa-transgender-alt"></i></span>
+                                                    </div>
+                                                    <input type="text" name="txt_gioitinh" class="form-control" placeholder="Giới tính" aria-label="Username" aria-describedby="basic-addon1">
+                                                </div>*@
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-transgender-alt"></i></span>
+                                                </div>
+                                                <select name="txt_gioitinh" class="custom-select" id="inputGroupSelect01">
+                                                    <option selected>Chọn giới tính...</option>
+                                                    <option value="Nam">Nam</option>
+                                                    <option value="Nữ">Nữ</option>
+
+                                                </select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-phone"></i></span>
+                                                </div>
+                                                <input type="text" name="txt_sdt" id="txt_sdt" class="form-control" placeholder="Số điện thoại" aria-label="Username" aria-describedby="basic-addon1">
+                                            </div>
+                                            <span class="sp-thongbao" id="tbSDT"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-address-book"></i></span>
+                                                </div>
+                                                <input type="text" name="txt_diachi" id="txt_diachi" class="form-control" placeholder="Địa chỉ" aria-label="Username" aria-describedby="basic-addon1">
+                                            </div>
+                                            <span class="sp-thongbao" id="tbDC"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-home"></i></span>
+                                                </div>
+                                                <input type="text" name="txt_truong" id="txt_truong" class="form-control" placeholder="Trường học" aria-label="Username" aria-describedby="basic-addon1">
+                                            </div>
+                                            <span class="sp-thongbao" id="tbTruongHoc"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="fa fa-edit"></i></span>
+                                                </div>
+                                                <textarea class="form-control" name="txt_noidung" id="txt_noidung" placeholder="Thông tin về nhu cầu học" aria-label="With textarea"></textarea>
+                                            </div>
+                                            <span class="sp-thongbao" id="tbNhuCauHoc"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <button type="submit" id="ok" class="btnXT pt-3 mt-3 w-70"><i class="fa fa-paper-plane pb-4 pr-2"></i>Đăng kí</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-12 col-sm-12 col-lg-6 mt-3">
+                        <iframe class="w-100 h-100" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.5543015179423!2d106.64132331472605!3d10.768791992326705!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752e97b4010409%3A0x9ac92ceff84f313a!2zMzQzTSBM4bqhYyBMb25nIFF1w6JuLCBQaMaw4budbmcgNSwgUXXhuq1uIDExLCBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2s!4v1577641387542!5m2!1svi!2s"
+                                frameborder="0" allowfullscreen class="bando"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+    <!-- end bản đồ -->
+    <!-- footer -->
+    <footer class="footer mt-5 " id="lienhe">
+        <div class="container-fluid pl-0 ">
+            <div class="row footer_panel pt-5">
+                <div class="footer_overlay pl-0 "></div>
+                <div class="col-12 col-md-3 col-sm-12">
+                    <h3>TRUNG TÂM BDVH <br /> KHOA HỌC TRẢI NGHIỆM</h3>
+                </div>
+                <div class=""></div>
+                <div class="col-10 col-md-2 col-sm-4 ml-2">
+                    <table>
+                        <tr>
+                            <td>
+                                <h4>Liên Kết</h4>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#GioiThieU"><p>Giới thiệu</p>  </a>
+
+                            </td>
+                        </tr>
+                        <tr><td> </td></tr>
+                        <tr>
+                            <td>
+                                <a href="#MonHoC"><p>Môn học</p></a>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#MohinH"><p>Mô hình</p></a>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#CSGHP"><p>Chính sách giảm học phí</p></a>
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-12 col-md-6 col-sm-6 ml-2">
+                    <table>
+                        <tbody id="data_lienhe">
+                            @foreach (var item in noidung)
+                            {
+                                <tr>
+                                    <td>
+                                        <p>
+                                            <i class="fa fa-address-book mr-2"></i> @item.DIA_CHI
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>
+                                            <i class="fa fa-address-book mr-2"></i> @item.EMAIL
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>
+                                            <i class="fa fa-address-book mr-2"></i> @item.SDT1
+                                        </p>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>
+                                            <i class="fa fa-address-book mr-2"></i> @item.SDT2
+                                        </p>
+                                    </td>
+                                </tr>
+                                break;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row Design pt-2 p-1  pr-0 m-0 w-100">
+                <div class="col-12 col-md-12 col-sm-12 ">
+
+                    <p>© 2019 Informing. All Rights Reserved | Design by 3Team | <i class="fa fa-phone"></i> <i class="fab fa-facebook"></i>03.88.174.111</p>
+
+                </div>
+
+            </div>
+        </div>
+
+    </footer>
+
+
+    @*<script src="~/Asset/admin/js/jquery.min.js"></script>*@
+    <script src="~/Asset/admin/js/popper.min.js"></script>
+    <script src="~/Asset/admin/js/bootstrap.min.js"></script>
+    <script src="~/Asset/admin/js/owl.carousel.min.js"></script>
+    <script>
+        $('.carousel').carousel({
+            interval: 9000
+        })
+    </script>
+    <script>
+        $('.owl-carousel').owlCarousel({
+            loop: true,
+            margin: 10,
+            autoplay: true,
+            autoplayTimeout: 2000,
+            autoplayHoverPause: true,
+            responsiveClass: true,
+            responsive: {
+                0: {
+                    items: 1,
+                    nav: true
+                },
+                600: {
+                    items: 3,
+                    nav: false
+                },
+                1000: {
+                    items: 3,
+                    nav: true,
+                    loop: true
+                }
+            }
+        });
+        owl.on('mousewheel', '.owl-stage', function (e) {
+            if (e.deltaY > 0) {
+                owl.trigger('next.owl');
+            } else {
+                owl.trigger('prev.owl');
+            }
+            e.preventDefault();
+        });
+    </script>
+    @*Xác nhận bấm nút ghi danh*@
+    <section>
+        <script>
+            function confirmAction() {
+                return confirm("Bạn chắc chắn muốn gửi thông tin?")
+            }
+        </script>
+    </section>
+    <section>
+        <script>
+            //function confirmLogin() {
+            //    return confirm("Xác nhận đăng nhập !")
+            //}
+        </script>
+    </section>
+    <!-- Load Facebook SDK for JavaScript -->
+    <div id="fb-root"></div>
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                xfbml: true,
+                version: 'v4.0'
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = 'https://connect.facebook.net/vi_VN/sdk/xfbml.customerchat.js';
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+
+    <!-- Your customer chat code -->
+    <div class="fb-customerchat"
+         attribution=setup_tool
+         page_id="361850014656925"
+         theme_color="#fa3c4c"
+         logged_in_greeting="Tư vấn đăng ký khoá học tại Trung Tâm BDVH Khoa Học Trải Nghiệm"
+         logged_out_greeting="Tư vấn đăng ký khoá học tại Trung Tâm BDVH Khoa Học Trải Nghiệm">
+    </div>
+</body>
+</html>

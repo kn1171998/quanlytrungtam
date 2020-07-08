@@ -1,0 +1,192 @@
+﻿
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout_gv.cshtml";
+    var chonlop = (List<TrungTam.Areas.Admin.Models.LOP_HOC>)ViewBag.chonlop;
+    var year = DateTime.Now.Year;
+    var month = DateTime.Now.Month;
+}
+
+<h2 class="Title_Content">Đánh giá cuối tháng</h2>
+<div class="container pt-5">
+    <form action="/Admin/DANH_GIA_CUOI_THANG/Create1" method="post">
+        @Html.AntiForgeryToken()
+        @*Chọn lớp trong ngày đó*@
+        
+        <div class="row">
+            <div class="col-6 input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text text-white bg-primary" for="lop">Chọn lớp</label>
+                </div>
+                <select class="custom-select" name="lop" id="lop">
+                    <option value="0" selected>Chọn...</option>
+                    @foreach (var item in chonlop)
+                    {
+                        <option value="@item.MA_LOP">@item.TEN_LOP</option>
+                    }
+                </select>
+            </div>
+            <div class="col-4 input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn tháng</label>
+                </div>
+                <select class="custom-select" name="thang" id="thang">
+                    <option value="0"> Chọn tháng</option>
+                    @for (int item = 1; item < 13; item++)
+                    {
+                        if (item == month)
+                        {
+                            <option value="@item" selected> @item </option>
+                        }
+                        else
+                        {
+                            <option value="@item"> @item </option>
+                        }
+                    }
+                </select>
+                <select class="custom-select" name="nam" id="nam">
+                    <option value="0"> Chọn năm </option>
+                    @for (int item = year - 1; item <= year; item++)
+                    {
+                        if (item == year)
+                        {
+                            <option value="@item" selected> @item </option>
+                        }
+                        else
+                        {
+                            <option value="@item"> @item </option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <hr />
+        <table class="table table-striped table-responsive table-bordered table-hover" id="listHS">
+            <thead class="text-white bg-primary">
+                <tr>
+                    <th>Họ và Tên</th>
+                    <th>Điện thoại</th>
+                    <th>Nhận xét của giáo viên</th>
+                </tr>
+            </thead>
+            <tbody id="HS"></tbody> @*tbody rỗng để data từ Ajax học viên chạy vào*@
+            <tr>
+                <td colspan="5">
+                    <center>
+                        <button type="submit" class="btn btn-success" id="save">Lưu</button>
+                        <button type="button" class="btn btn-warning">Quay lại</button>
+                    </center>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<section>
+    <script>      
+        $('#lop').change(function () {
+            var malop = $('#lop').val();
+            var thang = $('#thang').val();
+            var nam = $('#nam').val();
+            var ngay = thang + "_" + nam;
+            if (thang != "0" && nam != "0" && malop != "0") {
+                $.ajax({
+                    url: "/DANH_GIA_CUOI_THANG/Index1",
+                    data: {
+                        id: malop,
+                        ngay: ngay
+                    },
+                    dataType: "JSON",
+                    type: "GET",
+                    success: function (response) {
+                        $('#HS').html('');
+                        $(response).each(function (i, e) {
+                            var tr = $("<tr/>");
+                            $("<input type='hidden' name='mahs" + e.mahs + "' value='" + e.mahs + "' />").appendTo(tr);
+                            $("<input type='hidden' name='malop' value='" + e.malop + "' />").appendTo(tr);
+                            $("<td/>").html(e.hoten).appendTo(tr);//bo sung <td> vao <tr>
+                            $("<td/>").html(e.dienthoai).appendTo(tr);//bo sung <td> vao <tr>
+                            if (e.status)
+                                $("<td/>").html('<textarea class="md-textarea form-control" rows="2" col="7" name="nhanxet' + e.mahs + '">' + e.nhanxet + '</textarea>').appendTo(tr);
+                            else
+                                $("<td/>").html('<textarea class="md-textarea form-control" rows="2" col="7" name="nhanxet' + e.mahs + '"></textarea>').appendTo(tr);
+                            $('#HS').append(tr);
+                        });
+                    }
+                });
+            }
+            else {
+                $('#HS').html("");
+            }
+        });       
+        $('#thang').change(function () {
+            var malop = $('#lop').val();
+            var thang = $("#thang").val();
+            var nam = $("#nam").val();
+            var ngay = thang + "_" + nam;
+            if (thang != "0" && nam != "0" && malop != "0") {
+                $.ajax({
+                    url: "/DANH_GIA_CUOI_THANG/Index1",
+                    data: {
+                        id: malop,
+                        ngay: ngay
+                    },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $('#HS').html('');
+                        $(response).each(function (i, e) {
+                            var tr = $("<tr/>");
+                            $("<input type='hidden' name='mahs" + e.mahs + "' value='" + e.mahs + "' />").appendTo(tr);
+                            $("<input type='hidden' name='malop' value='" + e.malop + "' />").appendTo(tr);
+                            $("<td/>").html(e.hoten).appendTo(tr);//bo sung <td> vao <tr>
+                            $("<td/>").html(e.dienthoai).appendTo(tr);//bo sung <td> vao <tr>
+                            if (e.status)
+                                $("<td/>").html('<textarea class="md-textarea form-control" rows="2" col="7" name="nhanxet' + e.mahs + '">' + e.nhanxet + '</textarea>').appendTo(tr);
+                            else
+                                $("<td/>").html('<textarea class="md-textarea form-control" rows="2" col="7" name="nhanxet' + e.mahs + '"></textarea>').appendTo(tr);
+                            $('#HS').append(tr);
+                        });
+                    }
+                });
+            }
+            else {
+                $('#HS').html("");
+            }
+        });
+        $('#nam').change(function () {
+            var malop = $('#lop').val();
+            var thang = $("#thang").val();
+            var nam = $("#nam").val();
+            var ngay = thang + "_" + nam;
+            if (thang != "0" && nam != "0" && malop != "0") {
+                $.ajax({
+                    url: "/DANH_GIA_CUOI_THANG/Index1",
+                    data: {
+                        id: malop,
+                        ngay: ngay
+                    },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $('#HS').html('');
+                        $(response).each(function (i, e) {
+                            var tr = $("<tr/>");
+                            $("<input type='hidden' name='mahs" + e.mahs + "' value='" + e.mahs + "' />").appendTo(tr);
+                            $("<input type='hidden' name='malop' value='" + e.malop + "' />").appendTo(tr);
+                            $("<td/>").html(e.hoten).appendTo(tr);//bo sung <td> vao <tr>
+                            $("<td/>").html(e.dienthoai).appendTo(tr);//bo sung <td> vao <tr>
+                            if (e.status)
+                                $("<td/>").html('<textarea class="md-textarea form-control" rows="2" col="7" name="nhanxet' + e.mahs + '">' + e.nhanxet + '</textarea>').appendTo(tr);
+                            else
+                                $("<td/>").html('<textarea class="md-textarea form-control" rows="2" col="7" name="nhanxet' + e.mahs + '"></textarea>').appendTo(tr);
+                            $('#HS').append(tr);
+                        });
+                    }
+                });
+            }
+            else {
+                $('#HS').html("");
+            }
+        });
+    </script>
+</section>

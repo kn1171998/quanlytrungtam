@@ -1,0 +1,300 @@
+﻿@model IEnumerable<TrungTam.Areas.Admin.Models.BUOI_HOC>
+
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+    var chonlop = (List<TrungTam.Areas.Admin.Models.LOP_HOC>)ViewBag.chonlop;
+    var yearhientai = DateTime.Now.Year;
+    var thanghientai = DateTime.Now.Month;
+}
+@*Chọn lớp trong ngày đó*@
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn lớp</label>
+    </div>
+    <div id="listlop">
+        <select class="custom-select" name="lopp" id="lop">
+            <option>Chọn lớp</option>
+            @foreach (var item in chonlop)
+            {
+                <option value="@item.MA_LOP">@item.TEN_LOP</option>
+            }
+        </select>
+    </div>
+    <div class="input-group-prepend">
+        <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn tháng</label>
+    </div>
+    <div id="listthang">
+        <select class="custom-select" name="thang" id="thang">
+            @for (int i = 12; i > 0; i--)
+            {
+                if (i == thanghientai)
+                {
+                    <option value="@i" selected>@i</option>
+                }
+                else
+                {
+                    <option value="@i">@i</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="input-group-prepend">
+        <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn năm</label>
+    </div>
+    <div id="listnam">
+        <select class="custom-select" name="nam" id="nam">
+            @for (int i = 2018; i <= yearhientai; i++)
+            {
+                if (i == yearhientai)
+                {
+                    <option value="@i" selected>@i</option>
+                }
+                else
+                {
+                    <option value="@i">@i</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="input-group-prepend">
+        <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn Buổi</label>
+    </div>
+    <select class="custom-select" name="buoi" id="buoi" style="display:none">
+        @*danh sách các buổi của lớp đó*@
+    </select>
+</div>
+<hr />
+@*Thông tin giáo viên lên lớp*@
+<div class="row ">
+    <div col-2></div>
+    <div id="hoten" class="col-6 ">
+        @*thông tin giáo viên*@
+    </div>
+    <div id="sdt" class="col-6 ">
+        @*thông tin giáo viên*@
+    </div>
+</div>
+<div id="1"></div>
+<hr />
+<div class="row">
+    <div class="input-group mb-auto">
+        <div id="danhgia" class="input-group-prepend">
+        </div>
+    </div>
+</div>
+<hr />
+@*Danh sách học viên*@
+<table class="table table-bordered table-hover" id="listHS" style="display:none">
+    <thead class="text-center bg-primary text-white">
+        <tr>
+            <td>Họ và Tên</td>
+            <td>SDT Phụ huynh</td>
+            <td>Điểm danh</td>
+            <td>Ghi chú</td>
+            <td>Nhận xét của giáo viên</td>
+            <td>BTVN</td>
+            <td>Điểm số</td>
+            <td>Nhận xét về giáo viên</td>
+        </tr>
+    </thead>
+    <tbody id="HS"></tbody> @*tbody rỗng để data từ Ajax học viên chạy vào*@
+</table>
+@Html.AntiForgeryToken()
+<div id="result" class="row">
+    @*data từ Ajax giáo viên chạy vào*@
+</div>
+@*Ajax load danh sách buổi*@
+<section>
+    <script>
+        $('#lop').change(function () {
+            $("#listHS").attr("Style", "display:none");
+            $("#detail").attr("Style", "display:none");
+            $("#hoten").html("");
+            $("#sdt").html("");
+            $("#danhgia").html("");
+            var malop = $('#lop').val();
+            var thang = $('#thang').val();
+            var nam = $('#nam').val();
+            if (malop != "Chọn lớp") {
+                $("div#lbl_buoi").attr("Style", "display:block");
+                $("#buoi").attr("Style", "display:block");
+                $("select#buoi").html(""); //xoa noi dung
+                $("<option/>").html("Chọn buổi học").appendTo("select#buoi");
+                $.ajax({
+                    url: "/BUOI_HOC/LoadBuoi",
+                    data: { id: malop, thang: thang, nam: nam },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $(response).each
+                            (
+                                function (i, e) { //duyet mang doi tuong
+                                    if (malop == e.malop) {
+                                        $("<option value='" + e.mabuoi + "'/>").html("Buổi " + e.sttbuoi + " | " + e.thoigian)
+                                            .appendTo("select#buoi");
+                                    }
+                                });
+                    }
+                });
+            }
+            else {
+                $("div#lbl_buoi").attr("Style", "display:none");
+                $("#buoi").attr("Style", "display:none");
+            }
+        });
+    </script>
+</section>
+@*Ajax chọn tháng*@
+<section>
+    <script>
+        $('#thang').change(function () {
+            $("#listHS").attr("Style", "display:none");
+            $("#detail").attr("Style", "display:none");
+            $("#hoten").html("");
+            $("#sdt").html("");
+            $("#danhgia").html("");
+            var malop = $('#lop').val();
+            var thang = $('#thang').val();
+            var nam = $('#nam').val();
+            if (malop != "Chọn lớp") {
+                $("div#lbl_buoi").attr("Style", "display:block");
+                $("#buoi").attr("Style", "display:block");
+                $("select#buoi").html(""); //xoa noi dung
+                $("<option/>").html("Chọn buổi học").appendTo("select#buoi");
+                $.ajax({
+                    url: "/BUOI_HOC/LoadBuoi",
+                    data: { id: malop, thang: thang, nam: nam },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $(response).each
+                            (
+                                function (i, e) { //duyet mang doi tuong
+                                    if (malop == e.malop) {
+                                        $("<option value='" + e.mabuoi + "'/>").html("Buổi " + e.sttbuoi + " | " + e.thoigian)
+                                            .appendTo("select#buoi");
+                                    }
+                                });
+                    }
+                });
+            }
+            else {
+                $("div#lbl_buoi").attr("Style", "display:none");
+                $("#buoi").attr("Style", "display:none");
+            }
+        });
+    </script>
+</section>
+@*Chọn năm*@
+<section>
+    <script>
+        $('#nam').change(function () {
+            $("#listHS").attr("Style", "display:none");
+            $("#detail").attr("Style", "display:none");
+            $("#hoten").html("");
+            $("#sdt").html("");
+            $("#danhgia").html("");
+            var malop = $('#lop').val();
+            var thang = $('#thang').val();
+            var nam = $('#nam').val();
+            if (malop != "Chọn lớp") {
+                $("div#lbl_buoi").attr("Style", "display:block");
+                $("#buoi").attr("Style", "display:block");
+                $("select#buoi").html(""); //xoa noi dung
+                $("<option/>").html("Chọn buổi học").appendTo("select#buoi");
+                $.ajax({
+                    url: "/BUOI_HOC/LoadBuoi",
+                    data: { id: malop, thang: thang, nam: nam },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $(response).each
+                            (
+                                function (i, e) { //duyet mang doi tuong
+                                    if (malop == e.malop) {
+                                        $("<option value='" + e.mabuoi + "'/>").html("Buổi " + e.sttbuoi + " | " + e.thoigian)
+                                            .appendTo("select#buoi");
+                                    }
+                                });
+                    }
+                });
+            }
+            else {
+                $("div#lbl_buoi").attr("Style", "display:none");
+                $("#buoi").attr("Style", "display:none");
+            }
+        });
+    </script>
+</section>
+@*Ajax load thông tin học sinh - giáo viên của buổi học*@
+<section>
+    <script>
+        $('#buoi').change(function () {
+            $("tbody#HS").html(""); //xoa noi dung
+            $("#hoten").html(""); //xoa noi dung
+            $("#sdt").html(""); //xoa noi dung
+            $("#danhgia").html("");
+            var mabuoi = $('#buoi').val();
+            var malop = $('#lop').val();
+            var thang = $('#thang').val();
+            var nam = $('#nam').val();
+            if (mabuoi != "Chọn buổi học") {
+                $("#listHS").attr("Style", "display:block");
+                $("#detail").attr("Style", "display:block");
+                //Ajax học sinh
+                $.ajax({
+                    url: "/BUOI_HOC/Load_CTBuoi",
+                    data: { id: mabuoi },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        $(response).each
+                            (
+                                function (i, e) { //duyet mang doi tuong
+                                    $("#hoten").html("<label class='input-group-text bg-primary text-white' for='inputGroupSelect01'>Giáo viên : " + e.hotengv + "</label>");
+                                    $("#sdt").html("<label class='input-group-text bg-primary text-white' for='inputGroupSelect01'>Liên hệ : " + e.sdt + "</label>");
+                                    if (e.linkdanhgia == "")
+                                        $("#danhgia").html("<label class='input-group-text bg-primary text-white' for='inputGroupSelect01'>Chưa có link đánh giá</label>");
+                                    else
+                                        $("#danhgia").html("<a id='btn_details' class='btn btn-success' href='" + e.linkdanhgia + "'  target='__blank'>link đánh giá</a>");
+                                    var tr = $("<tr/>");
+                                    $("<td/>").html(e.hoten).appendTo(tr);//bo sung <td> vao <tr>
+                                    $("<td/>").html(e.dienthoai).appendTo(tr);//bo sung <td> vao <tr>
+                                    if (e.diemdanhhs == "1") {
+                                        $("<td/>").html("Có").appendTo(tr);
+                                    }
+                                    else if (e.diemdanhhs == "0") {
+                                        $("<td/>").html("Vắng").appendTo(tr);
+                                    }
+                                    else {
+                                        $("<td/>").html("Chưa điểm danh").appendTo(tr);
+                                    }
+                                    $("<td/>").html(e.lido).appendTo(tr);
+                                    $("<td/>").html(e.nhanxetgv).appendTo(tr);
+                                    $("<td/>").html(e.btvn).appendTo(tr);
+                                    $("<td/>").html(e.diemso).appendTo(tr);
+                                    $("<td/>").html(e.nhanxetvegv).appendTo(tr);
+                                    tr.appendTo("tbody#HS");// bo sung <tr> vao <tbody>
+                                });
+                    }
+                });
+                //=================================================================
+                //Ajax giáo viên
+
+            }
+            else {
+                $("#listHS").attr("Style", "display:none");
+                $("#detail").attr("Style", "display:none");
+            }
+        });
+    </script>
+</section>

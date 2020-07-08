@@ -1,0 +1,91 @@
+﻿@model TrungTam.Areas.Admin.Models.KHUYEN_MAI
+
+@{
+    ViewBag.Title = "Edit";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal myContent m-0 p-3">
+    <h2 class="Title_Content">Cập Nhật </h2>
+    <h4 class="title_TieuDe">Khuyến mãi</h4>
+    @Html.HiddenFor(model => model.MA_KM)
+    @Html.HiddenFor(model => model.TRANG_THAI)
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Tên khuyến mãi</span></div>
+            <div class="col-md-7 col-lg-6">
+                @Html.EditorFor(model => model.TEN_KM, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TEN_KM, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Số môn đăng kí</span></div>
+            <div class="col-md-7 col-lg-6">
+                @Html.EditorFor(model => model.SO_MON_DK, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SO_MON_DK, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    @*<div class="form-group">
+            @Html.LabelFor(model => model.SO_MON_DK, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SO_MON_DK, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SO_MON_DK, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Số tiền giảm</span></div>
+            <div class="col-md-7 col-lg-6">
+                @Html.EditorFor(model => model.TIEN_GIAM, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TIEN_GIAM, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    @*<div class="form-group">
+            @Html.LabelFor(model => model.TIEN_GIAM, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.TIEN_GIAM, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TIEN_GIAM, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-sm-4 col-md-4 col-lg-3">@Html.ActionLink("Quay lại", "Index")</div>
+            <div class="col-sm-8 col-md-7 col-lg-6">
+                <button type="submit" value="Save" class="btn btn-primary w-50"><i class="fa fa-save mr-2"></i>Save</button>
+            </div>
+        </div>
+
+    </div>
+    @*<div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>*@
+</div>
+}
+
+<div>
+    @*@Html.ActionLink("Back to List", "Index")*@
+</div>

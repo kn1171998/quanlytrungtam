@@ -1,0 +1,190 @@
+﻿@model IEnumerable<TrungTam.Areas.Admin.Models.HOA_DON>
+
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+    int stt = 0;
+}
+<style>
+    /*.my-custom-scrollbar {
+        position: relative;
+        height: 200px;
+        overflow: auto;
+    }
+
+    .table-wrapper-scroll-y {
+        display: block;
+    }*/
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_asc:before,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_asc_disabled:before,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:before {
+        bottom: .5em;
+    }
+</style>
+<h2 class="Title_Content">Thống kê bảng lương</h2>
+
+<div class="card-body">
+    <div class="row">
+        <div class="col-6">
+            <a class="btn btn-primary mt-5" href="~/Admin/HOA_DON/Create" id="tinh_luong">
+                <i class="fa fa-plus-square mr-2"></i>Tính lương
+            </a>
+        </div>
+        <div class="col-6">
+            <div class="input-group mb-3">
+                <button type="button" class="btn btn-primary" id="btn_loc">Lọc</button>
+                <div class="input-group-prepend">
+                    <input type="date" id="datepicker" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    @*<div class="row mb-3">
+        <div class="col">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Tên nhân viên" id="hoten">
+                <div class="input-group-prepend">
+                    <button class="input-group-text" id="btnTimNV"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>*@
+    <table id="dtVerticalScrollExample" class="table table-bordered table-responsive table-hover">
+        <thead class="text-center bg-primary text-white">
+            <tr>
+                <td>STT</td>
+                <td>Họ và Tên</td>
+                <td>Lương tháng</td>
+                <td>Ngày thanh toán</td>
+                <td>Tổng lương</td>
+                <th><em class="fa fa-cog"></em></th>
+            </tr>
+        </thead>
+        <tbody id="list">
+            @foreach (var item in Model)
+            {
+               
+                    stt++;
+                    <tr>
+                        <td>
+                            @stt
+                        </td>
+                        <td>
+                            @item.GIAO_VIEN.HO_TEN
+                        </td>
+                        <td>
+                            @item.TEN_HD
+                        </td>
+                        <td>
+                            @string.Format("{0:dd/MM/yyyy}", item.NGAY_THANH_TOAN)
+                        </td>
+                        <td>
+                            @string.Format("{0:0,0}", item.TONG_TIEN)
+                        </td>
+                        <td>
+                            <a id="btn_details" class="btn btn-success" href=" ~/Admin/HOA_DON/Details/@item.MA_HD"> Chi tiết</a>
+                        </td>
+                    </tr>
+                
+            }
+        </tbody>
+
+    </table>
+    
+</div>
+
+@*Ajax lọc theo tháng*@
+<section>
+    <script>
+        $('#btn_loc').click(function () {
+            var thang = $('#datepicker').val();
+            $.ajax({
+                url: "/HOA_DON/search_thoigian",
+                data: { id: thang },
+                dataType: "Json",
+                type: "GET",
+                success: function (response) {
+                    $('tbody#list').html("")
+                    $(response).each
+                        (
+                        function (i, e) { //duyet mang doi tuong
+                            console.log(e);
+                            var tr = $("<tr/>");
+                            $("<td/>").html(e.tengv).appendTo(tr);
+                            $("<td/>").html(e.tenhd).appendTo(tr);
+                            $("<td/>").html(e.ngay).appendTo(tr);
+                            $("<td/>").html(e.tongtien).appendTo(tr);
+                            $("<td/>").html("<a href='/Admin/HOA_DON/Details/" + e.mahd + "'>Chi tiết</a> ").appendTo(tr);
+                            tr.appendTo('tbody#list');
+                        });
+                }
+            });
+        });
+    </script>
+</section>
+@*Ajax tìm kiếm theo tên*@
+<section>
+    <script>
+        $('#hoten').keypress(function () {
+            var hoten = $('#hoten').val();
+            $.ajax({
+                url: "/HOA_DON/search_hoten",
+                data: { id: hoten },
+                dataType: "Json",
+                type: "GET",
+                success: function (response) {
+                    $('tbody#list').html("")
+                    $(response).each
+                        (
+                        function (i, e) { //duyet mang doi tuong
+                            console.log(e);
+                            var tr = $("<tr/>");
+                            $("<td/>").html(e.tengv).appendTo(tr);
+                            $("<td/>").html(e.tenhd).appendTo(tr);
+                            $("<td/>").html(e.ngay).appendTo(tr);
+                            $("<td/>").html(e.tongtien).appendTo(tr);
+                            $("<td/>").html("<a href='~/HOA_DON/Details/" + e.mahd + "'>Chi tiết</a> ").appendTo(tr);
+                            tr.appendTo('tbody#list');
+                        });
+                }
+            });
+        });
+    </script>
+</section>
+@*Ajax tự động xóa sau 2 năm*@
+<section>
+    <script>
+        $('#tinh_luong').click(function do_validate() {
+            $.ajax({
+                url: "/HOA_DON/Delete",
+                dataType: "Json",
+                type: "POST"
+            });
+        });
+    </script>
+</section>
+<script>
+    $(document).ready(function () {
+        $('#dtVerticalScrollExample').DataTable({
+            //"scrollY": "200px",
+            //"scrollCollapse": true,
+        });
+        //$('.dataTables_length').addClass('bs-select');
+    });
+</script>

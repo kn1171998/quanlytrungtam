@@ -1,0 +1,132 @@
+﻿@model List<TrungTam.Areas.Admin.Models.BANG_GIA_HOC_PHI>
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    var listkhoi = (List<TrungTam.Areas.Admin.Models.KHOI_LOP>)ViewBag.listkhoi;
+    var listloailop = (List<TrungTam.Areas.Admin.Models.LOAI_LOP>)ViewBag.listloailop;
+    var listmonhoc = (List<TrungTam.Areas.Admin.Models.MON_HOC>)ViewBag.listmonhoc;
+}
+
+
+@*<h2>Details</h2>*@
+
+<div>
+    
+    <hr />
+    <dl class="dl-horizontal myContent m-0 p-3">
+        <h2 class="Title_Content">Cập Nhật Học Phí</h2>
+        
+        <form action="/BANG_GIA_HOC_PHI/Edit" method="post" role="form" onsubmit="return ">
+            @Html.AntiForgeryToken()
+
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Khối</span></div>
+
+                    <div class="col-md-7 col-lg-6">
+                        <input type="hidden" name="ngayad" value="@Model[0].NGAY_AP_DUNG" />
+                        <input type="hidden" name="makhoi" value="@Model[0].MA_KHOI" />
+                        <select class="form-control" disabled>
+                            Chọn tên khối
+                            @foreach (var item in listkhoi)
+                            {
+                                if (Model[0].MA_KHOI == item.MA_KHOI)
+                                {
+                                    <option selected value="@item.MA_KHOI">@item.TEN_KHOI</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Loại</span></div>
+
+                    <div class="col-md-7 col-lg-6">
+                        <input type="hidden" name="maloai" value="@Model[0].MA_LOAI" />
+                        <select class="form-control" name="maloai" disabled>
+                            @foreach (var item in listloailop)
+                            {
+                                if (Model[0].MA_LOAI == item.MA_LOAI)
+                                {
+                                    <option selected value="@item.MA_LOAI">@item.TEN_LOAI</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Tên môn</span></div>
+
+                    <div class="col-md-7 col-lg-6">
+                        <input type="hidden" name="mamon" value="@Model[0].MA_MON" />
+                        <select class="form-control" name="mamon" disabled>
+                            @foreach (var item in listmonhoc)
+                            {
+                                if (Model[0].MA_MON == item.MA_MON)
+                                {
+                                    <option selected value="@item.MA_MON">@item.TEN_MON</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Đơn giá</span></div>
+
+                    <div class="col-md-7 col-lg-6">
+
+                        <input type="number" name="dongia" id="dongia" class="form-control input-sm" placeholder="Đơn giá" value="@string.Format("{0:0}",Model[0].DON_GIA)" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i> Số buổi</span></div>
+
+                    <div class="col-md-7 col-lg-6">
+
+                        <input required type="number" name="sobuoi" id="sobuoi" step="any" pattern="[-+]?[0-9]*[.,]?[0-9]+" min="1" max="10" class="form-control input-sm" placeholder="Số buổi" value="@Model[0].SO_BUOI" />
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-sm-4 col-md-4 col-lg-3"> @Html.ActionLink("Quay lại", "Index")</div>
+                    <div class="col-sm-8 col-md-7 col-lg-6">
+                        <button type="submit" value="Save" class="btn btn-primary w-50"><i class="fa fa-save mr-2"></i>Save</button>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </dl>
+</div>
+<p>
+    @*@Html.ActionLink("Edit", "Edit", new { id = Model.NGAY_AP_DUNG }) |*@
+    @Html.ActionLink("Back to List", "Index")
+</p>
+

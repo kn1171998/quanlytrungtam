@@ -1,0 +1,201 @@
+﻿
+@model IEnumerable<TrungTam.Areas.Admin.Models.NGOAI_GIO>
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+    var listgv = (List<TrungTam.Areas.Admin.Models.GIAO_VIEN>)ViewBag.listgv;
+    var listhd = (List<TrungTam.Areas.Admin.Models.BANG_LUONG>)ViewBag.listhd;
+}
+<style>
+    /*.my-custom-scrollbar {
+        position: relative;
+        height: 200px;
+        overflow: auto;
+    }
+
+    .table-wrapper-scroll-y {
+        display: block;
+    }*/
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_asc:before,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_asc_disabled:before,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:before {
+        bottom: .5em;
+    }
+</style>
+<h2 class="Title_Content">Danh sách chấm công ngoài lịch dạy</h2>
+<button type="button" class="btn btn-primary mt-5" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus-square mr-2"></i>Thêm mới</button>
+<div class="card-body">
+    @*<div class="row mb-3">
+        <div class="col">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Tên nhân viên" id="searchName">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="btnTimNV"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>*@
+    <table id="dtVerticalScrollExample" class="table table-responsive table-bordered table-hover" id="listHS">
+        <thead class="text-center bg-primary text-white">
+            <tr>
+                <td>Họ và Tên</td>
+                <td>Loại hoạt động</td>
+                <td>Ngày làm</td>
+                <td>Số lượng</td>
+                <th><em class="fa fa-cog"></em></th>
+            </tr>
+        </thead>
+        <tbody id="HS" class="text-center">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GIAO_VIEN.HO_TEN)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BANG_LUONG.TEN_LOAI)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NGAY_LAM)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SO_LUONG)
+                    </td>
+                    <td>
+                        <a href="~/Admin/NGOAI_GIO/Edit/@item.MA_NGOAI_GIO" class="btn btn-warning">sửa</a>
+                        <button id="xoa" name="xoa" value="@item.MA_NGOAI_GIO" class="btn btn-danger xoa">Xoá</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title title_TieuDe" id="exampleModalLabel">Chấm công ngoài giờ</h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @Html.ValidationSummary(true);
+                    <form role="form" action="~/NGOAI_GIO/Create" method="post" onsubmit="return themgio()">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Nhân viên</label>
+                                </div>
+                                <select class="custom-select" name="magv">
+                                    @foreach (var item in listgv)
+                                    {
+                                        <option value="@item.MA_GV">@item.HO_TEN</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Hoạt động</label>
+                                </div>
+                                <select class="custom-select" name="maluong">
+                                    @foreach (var item in listhd)
+                                    {
+                                        if (item.SO_LUONG_MAX == 0)
+                                        {
+                                            <option value="@item.MA_LOAI_LUONG">@item.TEN_LOAI</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Số lượng &nbsp;</label>
+                                </div>
+                                <input type="text" name="soluong" id="soGio" class="form-control" placeholder="Số lần thực hiện" />
+                            </div>
+                            <span class="sp-thongbao" id="tbSoGio"></span>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Ngày làm &nbsp;</label>
+                                </div>
+                                <input type="date" name="ngaylam" id="datepicker" class="form-control" placeholder="Ngày làm">
+                            </div>
+                            <span class="sp-thongbao" id="tbNgay"></span>
+                        </div>
+                        <div class="modal-footer" id="modal-footer">
+                            <button id="btnThemNV" type="submit" class="btn btn-primary">Thêm</button>
+                            <button id="btnDong" type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Modal footer -->
+
+        </div>
+    </div>
+    <script>
+        $('table tbody').on('click', 'button.xoa', function () {
+            var mangoaigio = $(this).closest('tr').find('button[name="xoa"]').val();
+            bootbox.confirm({
+                message: "Bạn có chắc muốn xoá không?",
+                buttons: {
+                    confirm: {
+                        label: "Có",
+                        className: "btn btn-danger"
+                    },
+                    cancel: {
+                        label: "Không",
+                        className: "btn btn-success"
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/Admin/NGOAI_GIO/Delete",
+                            data: { id: mangoaigio },
+                            type: "POST",
+                            success: function (response) {
+                                if (response == "1") {
+                                    bootbox.alert({ message: "Xoá thành công", callback: function () { location.reload() } });
+                                } else {
+                                    bootbox.alert("Không thể xóa");
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#dtVerticalScrollExample').DataTable({
+                //"scrollY": "200px",
+                //"scrollCollapse": true,
+            });
+            //$('.dataTables_length').addClass('bs-select');
+        });
+    </script>

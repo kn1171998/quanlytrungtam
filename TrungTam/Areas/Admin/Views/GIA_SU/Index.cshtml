@@ -1,0 +1,122 @@
+﻿@*@model PagedList.IPagedList<TrungTam.Areas.Admin.Models.GIA_SU>
+    @using PagedList.Mvc;*@
+@model IEnumerable<TrungTam.Areas.Admin.Models.GIA_SU>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+}
+<div class="container-fluid">
+    <h2>Thông tin Gia Sư</h2>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        Thêm thông tin gia sư
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Thông tin gia sư</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form role="form" action="/GIA_SU/Create" method="post" onsubmit="return GiaSu()">
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="fab fa-canadian-maple-leaf"></i></span>
+                            </div>
+                            <input name="tenlop" id="tenlop" type="text" class="form-control" placeholder="tên lớp" aria-label="Username" aria-describedby="basic-addon1">
+                            <span class="sp-thongbao" id="tbTen"></span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="fab fa-canadian-maple-leaf"></i></span>
+                            </div>
+                            <input type="text" name="monhoc" id="monhoc" class="form-control" placeholder="Môn học" aria-label="Username" aria-describedby="basic-addon1">
+                            <span class="sp-thongbao" id="tbMonHoc"></span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="fab fa-canadian-maple-leaf"></i></span>
+                            </div>
+                            <input type="text" name="thoigian" id="thoigian" class="form-control" placeholder="thời gian" aria-label="Username" aria-describedby="basic-addon1">
+                            <span class="sp-thongbao" id="tbTG"></span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="fab fa-canadian-maple-leaf"></i></span>
+                            </div>
+                            <input type="text" name="dongia" id="dongia" class="form-control" placeholder="Đơn giá" aria-label="Username" aria-describedby="basic-addon1">
+                            <span class="sp-thongbao" id="tbDG"></span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="fab fa-canadian-maple-leaf"></i></span>
+                            </div>
+                            <input type="text" name="diachi" id="diachi" class="form-control" placeholder="địa chỉ" aria-label="Username" aria-describedby="basic-addon1">
+                            <span class="sp-thongbao" id="tbDC"></span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="fab fa-canadian-maple-leaf"></i></span>
+                            </div>
+                            <input type="text" name="yeucau" id="yeucau" class="form-control" placeholder="Yêu cầu" aria-label="Username" aria-describedby="basic-addon1">
+                            <span class="sp-thongbao" id="tbYC"></span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="fab fa-canadian-maple-leaf"></i></span>
+                            </div>
+                            <input type="text" name="lienhe" id="lienhe" class="form-control" placeholder="Liên hệ" aria-label="Username" aria-describedby="basic-addon1">
+                            <span class="sp-thongbao" id="tbLH"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Thoát</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered table-hover table-responsive  mt-5">
+        <thead class="text-center text-white bg-primary m-3">
+            <tr>
+                <th>Lớp học</th>
+                <th>Môn dạy</th>
+                <th>Đơn giá</th>
+                <th>Thời gian</th>
+                <th>Địa chỉ</th>
+                <th>Yêu cầu</th>
+                <th>Liên hệ</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                using (Html.BeginForm("Delete", "GIA_SU", new { id = item.MA_GIA_SU }))
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.TEN_LOP)</td>
+                        <td>@Html.DisplayFor(modelItem => item.MON_DAY)</td>
+                        <td>@Html.DisplayFor(modelItem => item.DON_GIA)</td>
+                        <td>@Html.DisplayFor(modelItem => item.THOI_GIAN)</td>
+                        <td>@Html.DisplayFor(modelItem => item.DIA_CHI)</td>
+                        <td>@Html.DisplayFor(modelItem => item.YEU_CAU)</td>
+                        <td>@Html.DisplayFor(modelItem => item.LIEN_HE)</td>
+                        <td>
+                            <a class="btn btn-warning" href="~/Admin/GIA_SU/Edit/@item.MA_GIA_SU">Sửa</a>
+                            <input type="submit" class="btn btn-danger" value="Xóa" onclick="return confirm('Bạn chắc chắn muốn xóa phần tử này ?');" />
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @*@Html.PagedListPager(Model, page => Url.Action("Index", new { page }))*@
+</div>
+
+

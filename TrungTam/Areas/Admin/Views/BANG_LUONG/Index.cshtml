@@ -1,0 +1,276 @@
+﻿@model IEnumerable<TrungTam.Areas.Admin.Models.BANG_LUONG>
+@*@model PagedList.IPagedList<TrungTam.Areas.Admin.Models.BANG_LUONG>
+@using PagedList.Mvc;*@
+
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+    var stt = 0;
+}
+<style>
+    /*.my-custom-scrollbar {
+        position: relative;
+        height: 200px;
+        overflow: auto;
+    }
+
+    .table-wrapper-scroll-y {
+        display: block;
+    }*/
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_asc:before,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_asc_disabled:before,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:before {
+        bottom: .5em;
+    }
+</style>
+<h2 class="Title_Content">Danh Sách Bảng Lương</h2>
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">Thêm Lương Dạy</button>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ngoaigio">Thêm Lương Ngoài Giờ</button>
+<div class="card-body">
+
+    <table id="dtVerticalScrollExample" class="table table-bordered table-responsive table-hover myTable">
+        <thead class="text-white text-center">
+            <tr class="bg-primary">
+                <th class="nowrap">
+                    STT
+                </th>
+                <th>Loại Lương</th>
+                <th>Đơn Giá</th>
+                <th><em class="fa fa-cog"></em></th>
+            </tr>
+        </thead>
+        <tbody id="tableDanhSach" class="text-center">
+            @foreach (var item in Model)
+            {
+                stt += 1;
+                <tr>
+                    <td>
+                        @stt
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TEN_LOAI)
+                    </td>
+                    <td>
+                        @string.Format("{0:0,0}", @item.DON_GIA)
+                    </td>
+                    <td>
+                        <a id="btnCapNhatNV" class="btn btn-warning" href=" ~/Admin/BANG_LUONG/Edit/@item.MA_LOAI_LUONG"> Sửa</a>
+                        <button id="xoa" name="xoa" class="btn btn-danger xoa" value="@item.MA_LOAI_LUONG">Xoá</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @*@Html.PagedListPager(Model, page => Url.Action("Index", new { page }))*@
+</div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title title_TieuDe" id="exampleModalLabel">Thông Tin Lương</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @*<form action="/BANG_LUONG/Create" method="post" role="form" onsubmit="return themLLuong()">
+                    @Html.AntiForgeryToken()*@
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-funnel-dollar"></i></span>
+                            </div>
+                            <input type="text" name="tenloai" id="tenloai" class="form-control input-sm" placeholder="Loại Lương " required>
+                        </div>
+                        <span class="sp-thongbao" id="tbTen"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-funnel-dollar"></i></span>
+                            </div>
+                            <input type="number" name="soluongmin" id="min" class="form-control input-sm" min="1" placeholder="Sỉ số nhỏ" required>
+                        </div>
+                        <span class="sp-thongbao" id="tbMin"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-funnel-dollar"></i></span>
+                            </div>
+                            <input type="number" name="soluongmax" id="max" min="2" class="form-control input-sm" placeholder="Sỉ số lớn" required>
+                        </div>
+                        <span class="sp-thongbao" id="tbMax"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-donate"></i></span>
+                            </div>
+                            <input type="number" name="dongia" id="dongia" class="form-control input-sm" placeholder="Đơn Giá " required>
+                        </div>
+                        <span class="sp-thongbao" id="tbDG"></span>
+                    </div>
+                    <div class="modal-footer" id="modal-footer">
+                        @*<button id="btnThemNV" type="submit" class="btn btn-primary">Thêm Bảng Lương</button>*@
+                        <button id="btnThemNV" class="btn btn-primary">Thêm Bảng Lương</button>
+                        <button id="btnDong" type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    </div>
+                @*</form>*@
+            </div>
+            <!-- Modal footer -->
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ngoaigio" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title title_TieuDe" id="exampleModalLabel">Lương ngoài giờ</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @*<form action="/BANG_LUONG/Create" method="post" role="form">
+                    @Html.AntiForgeryToken()*@
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-funnel-dollar"></i></span>
+                            </div>
+                            <input type="text" name="tenloai" id="tenloaingoaigio" class="form-control input-sm" placeholder="Loại Lương " required>
+                        </div>
+                        <span class="sp-thongbao" id="tbTenLoai"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-donate"></i></span>
+                            </div>
+                            <input type="number" name="dongia" id="dongiangoaigio" class="form-control input-sm" placeholder="Đơn Giá " required>
+                        </div>
+                        <span class="sp-thongbao" id="tbTendg"></span>
+                    </div>
+                    <div class="modal-footer" id="modal-footer">
+                        @*<button id="btnThemNV" type="submit" class="btn btn-primary">Thêm Bảng Lương</button>*@
+                        <button id="btnThemNVNG" class="btn btn-primary">Thêm Bảng Lương</button>
+                        <button id="btnDong" type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    </div>
+                @*</form>*@
+            </div>
+            <!-- Modal footer -->
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#dtVerticalScrollExample').DataTable({
+            //"scrollY": "200px",
+            //"scrollCollapse": true,
+        });
+        //$('.dataTables_length').addClass('bs-select');
+    });
+</script>
+<script>
+    $('#btnThemNV').click(function () {
+        var dongia = $('#dongia').val();
+        var tenloai = $('#tenloai').val();
+        var min = $('#min').val();
+        var max = $('#max').val();
+        if (min >= max)
+            alert("Sỉ số 2 phải lớn hơn sỉ số 1");
+        else {
+            $.ajax({
+                url: "/BANG_LUONG/Create",
+                data: { tenloai: tenloai, dongia: dongia, min: min, max: max },
+                type: "POST",
+                success: function (response) {
+                    if (response == "1") {
+                        bootbox.alert({ message: "Thêm thành công", callback: function () { location.reload() } });
+                    } else if (response == "0") {
+                        bootbox.alert("Loại lương này đã tồn tại!");
+                    }
+                    else {
+                        bootbox.alert("Thêm thất bại!");
+                    }
+                }
+            })
+        }
+    });
+</script>
+<script>
+    $('#btnThemNVNG').click(function () {
+        var dongia = $('#dongiangoaigio').val();
+        var tenloai = $('#tenloaingoaigio').val();
+        var min = "0";
+        var max = "0";
+            $.ajax({
+                url: "/BANG_LUONG/Create",
+                data: { tenloai: tenloai, dongia: dongia, min: min, max: max },
+                type: "POST",
+                success: function (response) {
+                    if (response == "1") {
+                        bootbox.alert({ message: "Thêm thành công", callback: function () { location.reload() } });
+                    } else if (response == "0") {
+                        bootbox.alert("Loại lương này đã tồn tại!");
+                    }
+                    else {
+                        bootbox.alert("Thêm thất bại!");
+                    }
+                }
+            })
+    });
+</script>
+<script>
+    $('table tbody').on('click', 'button.xoa', function () {
+        var maluong = $(this).closest('tr').find('button[name="xoa"]').val();
+        bootbox.confirm({
+            message: "Bạn có chắc muốn xoá không?",
+            buttons: {
+                confirm: {
+                    label: "Có",
+                    className: "btn btn-danger"
+                },
+                cancel: {
+                    label: "Không",
+                    className: "btn btn-success"
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        url: "/Admin/BANG_LUONG/Delete",
+                        data: { id: maluong },
+                        type: "POST",
+                        success: function (response) {
+                            if (response == "1") {
+                                bootbox.alert({ message: "Xoá thành công", callback: function () { location.reload() } });
+                            } else {
+                                bootbox.alert("Không thể xóa");
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    });
+</script>

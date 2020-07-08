@@ -1,0 +1,142 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+
+    var hocvienmoi = (List<TrungTam.Areas.Admin.Abstracts.listhocsinhnew>)ViewBag.Listhocviennew;
+    var Listghidanh = (List<TrungTam.Areas.Admin.Models.GHI_DANH>)ViewBag.ghidanh;
+    int tonghv = ViewBag.tonghocvien;
+    int num = ViewBag.num;
+}
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">THỐNG KÊ</h1>
+    </div>
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Tổng số học viên -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Tổng số học viên</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@tonghv</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Số ghi danh mới trong tháng -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Học viên ghi danh</div>
+                            <button id="btn_ghidanh" class="btn btn-info"><div class="h5 mb-0 font-weight-bold text-gray-800"><font color="red">@num</font></div></button>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <table class="table table-bordered table-hover myTable" id="list_gd">
+        <thead class="text-white text-center">
+            <tr class="bg-primary">
+                <th>Họ và tên</th>
+                <th>Ngày sinh</th>
+                <th>Địa chỉ</th>
+                <th>Số ĐT</th>
+                <th>Trường</th>
+                <th>Nội dung</th>
+                <th><em class="fa fa-cog"></em></th>
+            </tr>
+        </thead>
+        <tbody id="tableDanhSach" class="text-center">
+            @foreach (var item in Listghidanh)
+            {
+                using (Html.BeginForm("Delete", "THONG_KE", new { id = item.MA_TB }))
+                {
+                    <tr class="alert">
+                        <td>
+                            @item.HO_TEN
+                        </td>
+                        <td>
+                            @item.NG_SINH
+                        </td>
+                        <td>
+                            @item.DIA_CHI
+                        </td>
+                        <td>
+                            @item.SDT
+                        </td>
+                        <td>
+                            @item.TRUONG
+                        </td>
+                        <td>
+                            @item.NOI_DUNG
+                        </td>
+                        <td>
+                            <input type="submit" class="btn btn-danger" value="Xóa" onclick="return confirm('Bạn chắc chắn muốn xóa phần tử này ?');" />
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        @*<tr><td colspan="7"><button class="btn btn-light" id="back" type="button">Quay lại</button></td></tr>*@
+    </table>
+
+    <!-- Content Row -->
+
+
+</div>
+@*<section>
+    <script>
+        $("#btn_ghidanh").click(function () {
+            $("#chart").hide();
+            $("#list_gd").attr("Style", "display: block");
+        });
+    </script>
+    <script>
+        $("#back").click(function () {
+            $("#chart").show();
+            $("#list_gd").attr("Style", "display: none");
+        });
+    </script>
+    <script>
+        window.onload = function () {
+            $.ajax({
+                url: "/THONG_KE/Load_hocvienmoi",
+                dataType: "Json",
+                type: "GET",
+                success: function (response) {
+                    $(response).each(
+                        function (i, e) {
+                            $("<p/>").html(e.luong).appendTo("#" + e.thang);
+                        }
+                    );
+                }
+            });
+        }
+    </script>
+</section>*@
+
+

@@ -1,0 +1,130 @@
+﻿@model TrungTam.Areas.Admin.Models.GIA_SU
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+}
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal myContent m-0 p-3">
+    <h2 class="Title_Content">Cập Nhật Gia Sư</h2>
+    <h4 class="title_TieuDe">Gia Sư</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.MA_GIA_SU)
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Tên Lớp</span></div>
+
+            <div class="col-md-7 col-lg-6">
+                @Html.EditorFor(model => model.TEN_LOP, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TEN_LOP, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Đơn Giá</span></div>
+
+            <div class="col-md-7 col-lg-6">
+                @Html.EditorFor(model => model.DON_GIA, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DON_GIA, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Địa Chỉ</span></div>
+
+            <div class="col-md-7 col-lg-6">
+                @Html.EditorFor(model => model.DIA_CHI, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DIA_CHI, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Môn Dạy</span></div>
+
+            <div class="col-md-7 col-lg-6">
+                @Html.EditorFor(model => model.MON_DAY, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MON_DAY, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Thời gian</span></div>
+
+            <div class="col-md-7 col-lg-6">
+                @Html.EditorFor(model => model.THOI_GIAN, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.THOI_GIAN, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Yêu cầu</span></div>
+
+            <div class="col-md-7 col-lg-6">
+                @Html.EditorFor(model => model.YEU_CAU, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.YEU_CAU, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Liên hệ</span></div>
+
+            <div class="col-md-7 col-lg-6">
+                @Html.EditorFor(model => model.LIEN_HE, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.LIEN_HE, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-sm-4 col-md-4 col-lg-3"> @Html.ActionLink("Quay lại", "Index")</div>
+            <div class="col-sm-8 col-md-7 col-lg-6">
+                <button type="submit" value="Save" class="btn btn-primary w-50"><i class="fa fa-save mr-2"></i>Save</button>
+            </div>
+        </div>
+
+    </div>
+
+    
+</div>
+}
+
+

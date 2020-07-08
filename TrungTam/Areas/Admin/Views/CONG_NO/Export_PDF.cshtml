@@ -1,0 +1,81 @@
+﻿@model List<TrungTam.Areas.Admin.Abstracts.ChiTietCongNo>
+@{
+    ViewBag.Title = "Export_PDF";
+    Layout = "~/Areas/Admin/Views/Shared/_layout_report.cshtml";
+}
+
+@*<div>TRUNG TÂM </div>*@
+<div class="row">
+    <div class="col-6">
+        <h4> Trung Tâm BDVH <br />KHOA HỌC TRẢI NGHIỆM</h4>
+    </div>
+    @*<div class="col-1 w-50 h-50" ><img src="~/Asset/admin/img/unnamed.png" /></div>*@
+</div>
+<div style="text-align:center" class="text-primary"><h4>HÓA ĐƠN</h4></div>
+<div style="text-align:right">Ngày thanh toán: @Model[0].ngaythanhtoan</div>
+@if (Model != null)
+{
+    <div style="text-align:right;">
+        <div class="text-success"><span>Mã học viên: </span>@Model[0].mahs</div>
+        <div class="text-success"><span>Tên học viên: </span>@Model[0].tenhs</div>
+    </div>
+}
+<table class="table table-bordered table-hover mt-2">
+    <thead class="text-primary">
+        <tr>
+            <th>Tên lớp</th>
+            <th>Tên môn</th>
+            <th>Tên loại</th>
+            <th>Tên khối</th>
+            <th>Giá tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            foreach (var i in Model)
+            {
+
+                //malop += i.malop.ToString();
+                //lay++;
+                <tr>
+                    <td>@i.tenlop</td>
+                    <td>@i.tenmon</td>
+                    <td>@i.tenloai</td>
+                    <td>@i.tenkhoi</td>
+                    <td>@string.Format("{0:0,0}", i.giatien)</td>
+                </tr>
+            }
+
+        }
+    </tbody>
+</table>
+@*<input type="hidden" name="malop" id="malop" value="@malop" />
+    <input type="hidden" name="lay" value="@lay" />*@
+<div id="ten"><span>Ghi chú hóa đơn</span><textarea name="tencongno" class="text-white col-sm-2" style="text-align:center;" placeholder="Ghi chú"></textarea></div>
+<div id="tiengiam" style="text-align:right;">
+    @if (Model != null)
+    {
+        <span>Khuyến mãi: </span>
+        @Model[0].tiengiam;
+        <span>%</span>
+    }
+</div>
+<div id="tien" style="text-align:right;">
+    <input type="hidden" name="tongtien" value="@Model[0].tongtien" /><span>Tổng tiền: </span>@string.Format("{0:0,0}", @Model[0].tongtien)
+</div>
+
+@*@if (CT_CongNo != null)
+    {
+        <input type="hidden" id="mahocsinh" value="@CT_CongNo[0].mahs" />
+    }*@
+@*</form>*@
+
+
+@section ClientScript{
+    <script>
+        @*$('#xuat').click(function () {
+              location.href = '@Url.Action("Payment", "CONG_NO")';
+        });*@
+    </script> }
+

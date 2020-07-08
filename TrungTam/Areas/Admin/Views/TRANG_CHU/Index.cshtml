@@ -1,0 +1,435 @@
+﻿@model TrungTam.Areas.Admin.Abstracts.LoginModel
+@{
+    Layout = null;
+    var khuyenmai = (List<TrungTam.Areas.Admin.Models.KHUYEN_MAI>)ViewBag.khuyenmai;
+    var noidung = (List<TrungTam.Areas.Admin.Models.TRANG_CHU>)ViewBag.noidung;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Trung Tâm BDVH -- KHOA HỌC TRẢI NGHIỆM</title>
+    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">*@
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/coliff/bootstrap-rfs/bootstrap-rfs.css">
+    <link rel="stylesheet" href="~/Asset/admin/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/Asset/admin/css/owl.carousel.min.css">
+
+    @*<link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">*@
+    <link href="~/Asset/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    @*<link rel="stylesheet" href="~/Asset/admin/css/style.css">*@
+    @*//ông biết sao ko cái file css có bên file bundles rồi ông ađ vô nữa là lỗi á*@
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+
+</head>
+
+<body>
+    @*@Html.AntiForgeryToken()*@
+    <!-- header -->
+    <header class="  header">
+        <!--navbar-expand-md   giới hạn  khi xuất hiện nút  -->
+        <!-- bg-dark màu -->
+        <div class="container mynav">
+            <nav class="row navbar navbar-expand-lg navbar-line bg-line ">
+                <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+                <div class="col-sm-4 col-md-4 col-lg-3 col-5 "> <a href="#"><img src="~/Asset/admin/img/unnamed.png" class="w-100 h-100"></a> </div>
+                <button class="navbar-toggler btn_menu p-2" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                </button>
+                <div class="col-7 ml-5 collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Trang Chủ <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Học Phí</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#lienhe">Liên Hệ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="~/Home/Index">Đăng Xuất</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="~/Admin/THONG_KE/Index">Quay Lại</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+    </header>
+    <!-- Button trigger modal -->
+    <!-- Modal -->
+    <!-- carousel -->
+    <form action="/TRANG_CHU/updateMucTieu" method="post">
+        <section class=" myCarousel">
+            <div id="demo" class="carousel carousel-fade slide " data-ride="carousel" data-interval="2000">
+
+                <!-- Indicatorsô vuông nhỏ -->
+                <ul class="carousel-indicators">
+                    <li data-target="#demo" data-slide-to="0" class="active"></li>
+                    <li data-target="#demo" data-slide-to="1"></li>
+                    <li data-target="#demo" data-slide-to="2"></li>
+                </ul>
+
+                <!-- The slideshow -->
+                <div class="carousel-inner col-12 col-sm-12 col-md-12">
+                    <div class="carousel-item active">
+                        <img src="~/Asset/admin/img/ca12.jpg" class="img-fluid w-100" alt="Chicago">
+                        <div class="carousel_overlay"></div>
+                        <div class=" carousel_caption" id="data_muctieu">
+                        
+                            <h1 class="display-5">TRUNG TÂM BDVH - KHOA HỌC TRẢI NGHIỆM</h1>
+                            @foreach (var item in noidung)
+                            {
+                                <p>
+                                    @item.MUC_TIEU<button class="btn btn-primary" type="button" id="btn_muctieu">Thay đổi</button>
+                                </p>
+                                break;
+                            }
+                        </div>
+
+                        @*input thay đổi caption*@
+                        <div class="carousel_caption" id="update_muctieu">
+                          
+                            <h1 class="display-5">TRUNG TÂM BDVH - KHOA HỌC TRẢI NGHIỆM</h1>
+                            <div>
+                                <button id="luu_muctieu" type="submit" class="btn btn-primary">Lưu</button>
+                                <button id="huy_muctieu" type="button" class="btn btn-warning">Hủy</button>
+                            </div>
+                            @foreach (var item in noidung)
+                            {
+                                <p>
+                                    <textarea class="md-textarea form-control" rows="7" name="muctieu">@item.MUC_TIEU</textarea>
+                                </p>
+                                break;
+                            }
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </form>
+    <form action="/TRANG_CHU/updateGioiThieu" method="post">
+        <!-- giới thiệu -->
+        <section class="Gioithieu mt-5" id="GioiThieU">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-7"><img src="~/Asset/admin/img/Gt.jpg" class="w-100 h-100" alt=""></div>
+                    <div class="col-12 col-md-5 col-sm-12 content_text_gt" id="data_gioithieu">
+                        <h2 class="gt_detitle ">Giới Thiệu</h2>
+                        @foreach (var item in noidung)
+                        {
+                            <p>
+                                @item.GIOI_THIEU
+                            </p>
+                            break;
+                        }
+                        <button class="btn btn-primary" id="btn_gioithieu" type="button">Thay đổi</button>
+                    </div>
+                    @*input thay đổi phần giới thiệu*@
+                    <div class="col-12 col-md-5 col-sm-12 content_text_gt" id="update_gioithieu">
+                        <h2 class="gt_detitle ">Giới Thiệu</h2>
+                        @foreach (var item in noidung)
+                        {
+                            <p>
+                                <textarea class="md-textarea form-control" rows="7" name="gioithieu">@item.GIOI_THIEU</textarea>
+                            </p>
+                            break;
+                        }
+                        <button id="luu_gioithieu" type="submit" class="btn btn-primary">Lưu</button>
+                        <button id="huy_gioithieu" type="button" class="btn btn-warning">Hủy</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+    <form action="/Admin/TRANG_CHU/ChangeImage" enctype="multipart/form-data" method="post">
+        <section class="thuvien mt-5 p-5">
+            <div class="container">
+                <h2 class="tieude m-1 pb-3">Hình Ảnh Lớp Học</h2>
+                <div class="row">
+                    <div class="col-3">
+                        <input name="tv10" type="file" class="btn btn-circle btn-success w-100 h-5" placeholder="Thay ảnh">
+                        <img src="~/Asset/admin/img/tv10.jpg" class="w-100 h-100" alt="">
+                    </div>
+                    <div class="col-3">
+                        <input name="tv11" type="file" class="btn btn-circle btn-success w-100 h-5" placeholder="Thay ảnh">
+                        <img src="~/Asset/admin/img/tv11.jpg" class="w-100 h-100" alt="">
+                    </div>
+                    <div class="col-6">
+                        <input name="tv12" type="file" class="btn btn-circle btn-success w-100 h-5" placeholder="Thay ảnh">
+                        <img src="~/Asset/admin/img/tv12.jpg" class="w-100 h-100">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <input name="tv8" type="file" class="btn btn-circle btn-success w-100 h-5" placeholder="Thay ảnh">
+                        <img src="~/Asset/admin/img/tv8.jpg" class="w-100 h-100" alt="">
+                    </div>
+                    <div class="col-3">
+                        <input name="tv6" type="file" class="btn btn-circle btn-success w-100 h-5" placeholder="Thay ảnh">
+                        <img src="~/Asset/admin/img/tv6.jpg" class="w-100 h-100" alt="">
+                    </div>
+                    <div class="col-3">
+                        <input name="that" type="file" class="btn btn-circle btn-success w-100 h-5" placeholder="Thay ảnh">
+                        <img src="~/Asset/admin/img/that.jpg" class="w-100 h-100" alt="">
+                    </div>
+
+                </div>
+
+
+                <div>
+                </div>
+
+            </div>
+            <div class="row m-5 ">
+                <div class="col-12 p-3 text-center">
+                    <button class="btn btn-success pl-3 pr-3" type="submit"><i class="fa fa-save pl-2"></i>Lưu</button>
+                </div>
+            </div>
+
+
+
+        </section>
+    </form>
+    <!-- footer -->
+    <form action="/TRANG_CHU/updatefooter" method="post">
+        <footer class="footer mt-5 " id="lienhe">
+            <div class="container-fluid">
+                <div class="row footer_panel pt-5">
+                    <div class="footer_overlay"></div>
+                    <div class="col-12 col-md-3 col-sm-12">
+                        <h3>TRUNG TÂM BDVH <br /> KHOA HỌC TRẢI NGHIỆM</h3>
+                    </div>
+                    <div class=""></div>
+                    <div class="col-10 col-md-2 col-sm-4 ml-2">
+                        <table>
+                            <tr>
+                                <td>
+                                    <h4>Liên Kết</h4>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="#GioiThieU"><p>Giới thiệu</p>  </a>
+
+                                </td>
+                            </tr>
+                            <tr><td> </td></tr>
+                            <tr>
+                                <td>
+                                    <a href="#MonHoC"><p>Môn học</p></a>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="#MohinH"><p>Mô hình</p></a>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="#CSGHP"><p>Chính sách giảm học phí</p></a>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-12 col-md-6 col-sm-6 ml-2">
+                        <table>
+                            <tr>
+                                <td><h4>Liên Hệ</h4></td>
+                            </tr>
+                            <tbody id="data_lienhe">
+                                @foreach (var item in noidung)
+                                {
+                                    <tr>
+                                        <td>
+                                            <p>
+                                                <i class="fa fa-address-book mr-2"></i> @item.DIA_CHI
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>
+                                                <i class="fa fa-address-book mr-2"></i> @item.EMAIL
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>
+                                                <i class="fa fa-address-book mr-2"></i> @item.SDT1 &nbsp;&nbsp;&nbsp;<button class="btn btn-primary" type="button" id="btn_lienhe">Thay đổi</button>
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>
+                                                <i class="fa fa-address-book mr-2"></i> @item.SDT2
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    break;
+                                }
+                            </tbody>
+                            @*input để thay đổi thông tin liên hệ*@
+                            <tbody id="update_lienhe">
+                                @foreach (var item in noidung)
+                                {
+                                    <tr>
+                                        <td>
+                                            <p>
+                                                <i class="fa fa-address-book mr-2"></i>
+                                                <textarea class="md-textarea form-control" rows="3" name="diachi">@item.DIA_CHI</textarea>
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>
+                                                <i class="fa fa-address-book mr-2"></i>
+                                                <textarea class="md-textarea form-control" rows="3" type="email" name="email">@item.EMAIL</textarea>
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>
+                                                <i class="fa fa-address-book mr-2"></i>
+                                                <textarea class="md-textarea form-control" rows="3" type="tel" name="sdt1">@item.SDT1</textarea>
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>
+                                                <i class="fa fa-address-book mr-2"></i>
+                                                <textarea class="md-textarea form-control" rows="3" type="tel" name="sdt2">@item.SDT2</textarea>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    break;
+                                }
+                                <tr>
+                                    <td><button id="luu_lienhe" type="submit" class="btn btn-primary">Lưu</button></td>
+                                    <td><button id="huy_lienhe" type="button" class="btn btn-warning">Hủy</button></td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </footer>
+    </form>
+
+    @*<script src="~/Asset/admin/js/jquery.min.js"></script>*@
+    <script src="~/Asset/admin/js/popper.min.js"></script>
+    <script src="~/Asset/admin/js/bootstrap.min.js"></script>
+    <script src="~/Asset/admin/js/owl.carousel.min.js"></script>
+    <script>
+
+        $('.owl-carousel').owlCarousel({
+            loop: true,
+            margin: 10,
+            autoplay: true,
+            autoplayTimeout: 2000,
+            autoplayHoverPause: true,
+            responsiveClass: true,
+            responsive: {
+                0: {
+                    items: 1,
+                    nav: true
+                },
+                600: {
+                    items: 3,
+                    nav: false
+                },
+                1000: {
+                    items: 3,
+                    nav: true,
+                    loop: true
+                }
+            }
+        });
+        owl.on('mousewheel', '.owl-stage', function (e) {
+            if (e.deltaY > 0) {
+                owl.trigger('next.owl');
+            } else {
+                owl.trigger('prev.owl');
+            }
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>
+<section>
+    <script>
+        $("button#btn_muctieu").click(function () {
+            $('div#data_muctieu').hide();
+            $('div#update_muctieu').show();
+        });
+    </script>
+    <script>
+        $("button#huy_muctieu").click(function () {
+            $('div#data_muctieu').show();
+            $('div#update_muctieu').hide();
+        });
+    </script>
+    <script>
+        $("button#btn_gioithieu").click(function () {
+            $('div#data_gioithieu').hide();
+            $('div#update_gioithieu').show();
+        });
+    </script>
+    <script>
+        $("button#huy_gioithieu").click(function () {
+            $('div#data_gioithieu').show();
+            $('div#update_gioithieu').hide();
+        });
+    </script>
+    <script>
+        $("button#btn_lienhe").click(function () {
+            $('tbody#data_lienhe').hide();
+            $('tbody#update_lienhe').show();
+        });
+    </script>
+    <script>
+        $("button#huy_lienhe").click(function () {
+            $('tbody#data_lienhe').show();
+            $('tbody#update_lienhe').hide();
+        });
+    </script>
+</section>
+<section>
+    <script>
+        window.onload = function () {
+            do_validate();
+        };
+        function do_validate() {
+            $('tbody#update_lienhe').hide();
+            $('div#update_gioithieu').hide();
+            $('div#update_muctieu').hide();
+        };
+
+    </script>
+</section>

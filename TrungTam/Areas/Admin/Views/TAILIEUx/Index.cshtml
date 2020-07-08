@@ -1,0 +1,245 @@
+﻿@model PagedList.IPagedList<TrungTam.Areas.Admin.Models.TAILIEU>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "TaiLieuGV";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('2'))
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout_gv.cshtml";
+    }
+    var monhoc = (List<TrungTam.Areas.Admin.Models.MON_HOC>)ViewBag.monhoc;
+    var stt = 0;
+
+}
+<div class=" container card-body">
+    <h2 class="text-center">Tài liệu tham khảo</h2>
+
+    <!-- Button trigger modal -->
+    <button type="button" id="them" class="btn btn-warning m-4" data-toggle="modal" data-target="#exampleModal">
+        Thêm Tài Liệu
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title title_TieuDe" id="exampleModalLabel">Upload tài liệu</h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form role="form" action="/TAILIEUx/Create" method="post">
+                    <div class="modal-body">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                                </div>
+                                <input type="text" name="name" id="name" class="form-control input-sm" placeholder="Tên tài liệu">
+                            </div>
+                            <span class="sp-thongbao" id="tbTen"></span>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input type="text" name="link" id="link" class="form-control" placeholder="Link tài liệu">
+                            </div>
+                            <span class="sp-thongbao" id="tbNgay"></span>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-dollar"></i></span>
+                                </div>
+                                <input type="number" name="khoi" id="khoi" class="form-control" placeholder="Khối lớp">
+                            </div>
+                            <span class="sp-thongbao" id="tbNgay"></span>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-dollar"></i></span>
+                                </div>
+                                <select class="custom-select" id="inputGroupSelect01" name="monhoc">
+                                    <option selected value="0">Chọn môn</option>
+                                    @foreach (var item in monhoc)
+                                    {
+                                        <option value="@item.MA_MON">@item.TEN_MON</option>
+                                    }
+                                </select>
+                            </div>
+                            <span class="sp-thongbao" id="tbNgay"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer" id="modal-footer">
+                        <button id="btnThemNV" type="submit" class="btn btn-primary" onclick="return confirm('Bạn chắc chắn muốn thêm tài liệu ?');">Upload</button>
+                        <button id="btnDong" type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Modal footer -->
+        </div>
+    </div>
+    @*=================================================================*@
+
+    <div class="row">
+        <div class="col-6">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text text-white bg-primary" for="inputGroupSelect01">Khối</label>
+                </div>
+                <select class="custom-select" id="cb_khoi" name="cb_khoi">
+                    <option selected value="0">Chọn khối</option>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text text-white bg-primary" for="inputGroupSelect01">Môn học</label>
+                </div>
+                <select class="custom-select" id="cb_monhoc">
+                    <option selected value="0">Chọn môn</option>
+                    @foreach (var item in monhoc)
+                    {
+                        <option value="@item.MA_MON">@item.TEN_MON</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered table-hover" id="listTL">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th>
+                    STT
+                </th>
+                <th>
+                    Môn học
+                </th>
+                <th>
+                    Khối
+                </th>
+                <th>
+                    Tài liệu
+                </th>
+                <th>
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        <tbody id="list_ds">
+            @foreach (var item in Model)
+            {
+
+                stt++;
+                <tr>
+                    <td>
+                        @stt
+                    </td>
+                    <td>
+                        @item.MON_HOC.TEN_MON
+                    </td>
+                    <td>
+                        @item.KHOI
+                    </td>
+                    <td>
+                        @item.TENTL
+                    </td>
+                    <td>
+                        <a id="btn_details" class="btn btn-success" href="@item.LINK" target="__blank">Xem tài liệu</a> |
+                        <a id="btn_detail" class="btn btn-success" href="~/Admin/TAILIEUx/Edit/@item.MATL">Thay đổi</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+</div>
+<section>
+    <script>
+        $('#cb_khoi').change(function () {
+            $("#list_ds").html("");
+            var khoi = $("#cb_khoi").val();
+            var mon = $("#cb_monhoc").val();
+            //if (khoi != "0") {
+                $.ajax({
+                    url: "/TAILIEUx/LoadKhoi",
+                    data: { khoi: khoi,  mon: mon},
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        var stt = 1;
+                        $(response).each
+                            (
+                            function (i, e) { //duyet mang doi tuong
+                                var tr = $("<tr/>");
+                                $("<td/>").html(stt).appendTo(tr);//bo sung <td> vao <tr>
+                                $("<td/>").html(e.MONHOC).appendTo(tr);
+                                $("<td/>").html(e.KHOI).appendTo(tr);//bo sung <td> vao <tr>
+                                $("<td/>").html(e.TENTL).appendTo(tr);
+                                    $("<td/>").html("<a id='btn_details' class='btn btn-success' href=" + e.LINK + " target='__blank'>Xem tài liệu</a> | <a id = 'btn_details' class= 'btn btn-success' href = '/Admin/TAILIEUx/Edit/"+e.MATL+"'>Thay đổi</a>").appendTo(tr);
+                                tr.appendTo("tbody#list_ds");// bo sung <tr> vao <tbody>
+                                stt++;
+                            });
+                    }
+                });
+            //}
+        });
+    </script>
+    <script>
+        $('#cb_monhoc').change(function () {
+            $("#list_ds").html("");
+            var khoi = $("#cb_khoi").val();
+            var mon = $("#cb_monhoc").val();
+            //if (mon != "0") {
+                $.ajax({
+                    url: "/TAILIEUx/LoadKhoi",
+                    data: { khoi: khoi, mon: mon },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        var stt = 1;
+                        $(response).each
+                            (
+                            function (i, e) { //duyet mang doi tuong
+                                var tr = $("<tr/>");
+                                $("<td/>").html(stt).appendTo(tr);//bo sung <td> vao <tr>
+                                $("<td/>").html(e.MONHOC).appendTo(tr);
+                                $("<td/>").html(e.KHOI).appendTo(tr);//bo sung <td> vao <tr>
+                                $("<td/>").html(e.TENTL).appendTo(tr);
+                                    $("<td/>").html("<a id='btn_details' class='btn btn-success' href=" + e.LINK + " target='__blank'>Xem tài liệu</a> | <a id = 'btn_details' class= 'btn btn-success' href = '/Admin/TAILIEUx/Edit/"+e.MATL+"'>Thay đổi</a>").appendTo(tr);
+                                tr.appendTo("tbody#list_ds");// bo sung <tr> vao <tbody>
+                                stt++;
+                            });
+                    }
+                });
+            //}
+        });
+    </script>
+</section>
+<section>
+    <script>
+        window.onload = function () {
+            if (@id.ToString().First().Equals('2')) {
+                alert("hello");
+                $("#them").hide();
+                $("#btn_detail").hide();
+            }
+        }
+    </script>
+</section>

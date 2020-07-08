@@ -1,0 +1,114 @@
+﻿@*@model IEnumerable<TrungTam.Areas.Admin.Models.MON_HOC>*@
+@model PagedList.IPagedList<TrungTam.Areas.Admin.Models.MON_HOC>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+
+<h2 class="Title_Content">Danh Sách Môn Học</h2>
+
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+    Thêm Môn Học
+</button>
+<div class="card-body">
+    
+    <table class="table table-responsive table-bordered table-hover myTable">
+        <thead class="text-white bg-primary text-center" >
+            <tr>
+                
+                <th>Tên Môn Học</th>
+                <th><em class="fa fa-cog"></em></th>>    
+            </tr>
+        </thead>        
+        <tbody id="tableDanhSach">
+@foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TEN_MON)
+                </td>
+                <td>
+                    <a class="btn btn-warning" href="~/Admin/MON_HOC/Edit/@item.MA_MON">Sửa</a>
+                    <button type="button" name="xoa" class="btn btn-danger xoa" id="xoa" value="@item.MA_MON">Xoá</button>
+                </td>
+            </tr>
+}
+	</tbody>
+</table>
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page}))
+ </div>
+    <!--Modal-->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title " id="exampleModalLabel">Thông Môn Học</h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/MON_HOC/Create" method="post" role="form" onsubmit="return themMonHoc()">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                                </div>
+                                <input type="text" name="tenmon" id="tenmon" class="form-control input-sm" placeholder="Tên Môn Học">
+                            </div>
+                            <span class="sp-thongbao" id="tbTenMon"></span>
+                        </div>
+                        <div class="modal-footer" id="modal-footer">
+                            <button id="btnThemNV" type="submit" class="btn btn-success">Thêm Môn Học</button>
+                            <button id="btnDong" type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+      $('table tbody').on('click', 'button.xoa', function () {
+            //var token = $("[name='__RequestVerificationToken']").val();
+          var mamon = $(this).closest('tr').find('button[name="xoa"]').val();
+            bootbox.confirm({
+                message: "Bạn có chắc muốn xoá không?",
+                buttons: {
+                    confirm: {
+                        label: "Có",
+                        className: "btn btn-danger"
+                    },
+                    cancel: {
+                        label: "Không",
+                        className: "btn btn-success"
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        
+                        $.ajax({
+                            url: "/MON_HOC/Delete",
+                            data: { mamon: mamon },
+                            type: "POST",
+                            success: function (response) {
+                                if (response == "1") {
+                                    bootbox.alert({ message: "Xoá thành công", callback: function () { location.reload() } });
+                                } else {
+                                    bootbox.alert("Môn học đang được sử dụng ở bảng học phí! Vui lòng xoá môn học khác");
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+        });
+</script>

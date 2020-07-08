@@ -1,0 +1,46 @@
+﻿@*@model PagedList.IPagedList<TrungTam.Areas.Admin.Models.GIA_SU>
+    @using PagedList.Mvc;*@
+@model IEnumerable<TrungTam.Areas.Admin.Models.GIA_SU>
+@{
+    ViewBag.Title = "TuyenG_SU";
+    Layout = "~/Areas/Admin/Views/Shared/Layout_G_S.cshtml";
+}
+
+<div class="container">
+    <h2 class="text-center pt-5"> TUYỂN GIA SƯ</h2>
+
+    <div class="row">
+        @*<div class="col-6">
+
+            </div>*@
+        @*<div class="input-group mb-3 col-12 mt-3 m-3 ml-5">
+            <input type="text" class="form-control" placeholder="tìm kiếm..." aria-label="Recipient's username" aria-describedby="button-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-info" type="button" id="button-addon2">Tìm kiếm</button>
+            </div>
+        </div>*@
+        @foreach (var item in Model)
+        {
+
+            <div class="m-3 bg-gradient-info p-3 col-12 col-lg-12 col-md-12 text-white col-sm-12 ">
+                <hr />
+                <h4 class="text-warning bg-dark text-center p-3"><i class="fa fa-check-circle pr-1"></i>Lớp dạy: @item.TEN_LOP</h4>
+                <h5><i class="fa fa-check-circle pr-1"></i>Môn dạy: @item.MON_DAY</h5>
+                <h5><i class="fa fa-check-circle pr-1"></i>Đơn giá: @item.DON_GIA</h5>
+                <h5><i class="fa fa-check-circle pr-1"></i>Thời gian dạy: @item.THOI_GIAN</h5>
+                <h5><i class="fa fa-check-circle pr-1"></i>Địa chỉ: @item.DIA_CHI</h5>
+                <h5><i class="fa fa-check-circle pr-1"></i>Yêu cầu: @item.YEU_CAU</h5>
+                <h5><i class="fa fa-check-circle pr-1"></i>Liên hệ: @item.LIEN_HE</h5>
+
+            </div>
+
+
+        }
+    </div>
+</div>
+@*@Html.PagedListPager(Model, page => Url.Action("tuyengiasu", new { page }))*@
+
+
+
+
+

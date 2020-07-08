@@ -1,0 +1,35 @@
+﻿@model TrungTam.Areas.Admin.Models.KHOI_LOP
+
+@{
+    ViewBag.Title = "Details";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>KHOI_LOP</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TEN_KHOI)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TEN_KHOI)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.MA_KHOI }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

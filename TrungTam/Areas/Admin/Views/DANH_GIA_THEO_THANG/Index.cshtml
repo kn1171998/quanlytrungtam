@@ -1,0 +1,146 @@
+﻿@model List<TrungTam.Areas.Admin.Models.LOP_HOC>
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else if (id.ToString().First().Equals('8'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+        var nam = DateTime.Now.Year;
+    var thang = DateTime.Now.Month;
+}
+
+<h2 class="Title_Content">Xuất đánh giá theo tháng</h2>
+<div class="m-3">
+    @if(Model.Count != 0)
+    {
+        <select class="form-control" name="lophoc" id="lophoc">
+            <option value="@Model[0].MA_LOP">Chọn lớp</option>
+            @foreach (var i in Model)
+            {
+                <option value="@i.MA_LOP">
+                    @i.TEN_LOP
+                </option>
+            }
+        </select>
+    }
+</div>
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn tháng</label>
+    </div>
+    <select class="custom-select" name="thang" id="thang">
+        @*<option value="0"> Chọn tháng cần tính lương </option>*@
+        @for (int item = 1; item < 13; item++)
+        {
+            if (item == thang)
+            {
+                <option selected value="@item"> @item </option>
+            }
+            else
+            {
+                <option value="@item"> @item </option>
+            }
+        }
+    </select>
+    <div class="input-group-prepend">
+        <label class="input-group-text bg-primary text-white" for="inputGroupSelect01">Chọn năm</label>
+        <select class="custom-select" name="nam" id="nam">
+            <option value="@nam">@nam </option>
+
+            @for (int item = 2019; item < nam; item++)
+            {
+                <option value="@item"> @item </option>
+            }
+        </select>
+    </div>
+</div>
+
+
+
+<table class="table table-bordered table-hover table-responsive">
+    <thead class="text-white bg-primary">
+        <tr>
+            <th class="nowrap">
+                <span class="mr-1">Mã học viên</span>
+            </th>
+            <th class="nowrap">
+                <span class="mr-1">Họ tên</span>
+            </th>
+            <th class="nowrap">
+                <span class="mr-1">SDT Phụ huynh</span>
+            </th>
+            <th class="nowrap">
+
+            </th>
+        </tr>
+    </thead>
+    <tbody id="ds_hocsinh">
+    </tbody>
+</table>
+
+@section ClientScript{
+    <script>
+
+        $('#lophoc').change(function () {
+            var malop = $('#lophoc').val();
+            $.ajax({
+                type: "GET",
+                url: "/DANH_GIA_THEO_THANG/Index1",
+                data: { id: malop },
+                dataType: "JSON",
+                traditional: true,
+                contentType: "application/json; chartset=utf-8",
+                success: function (response) {
+                    $('tbody#ds_hocsinh').html("");
+                    $(response).each(function (i, e) {
+                        var tr = $("<tr/>");
+                        $("<td/>").html('<input type = "hidden" name="mahs" id = "mahs" value = "' + e.mahs + '"/>' + e.mahs).appendTo(tr);
+                        $("<td/>").html(e.tenhs).appendTo(tr);
+                        $("<td/>").html(e.sdt).appendTo(tr);
+                        $("<td/>").html('<span class="mr-1"><button class="btn btn-primary xuat" id="xuat">Xuất đánh giá</button></span>').appendTo(tr);
+                        $('#ds_hocsinh').append(tr);
+                    });
+                }
+            });
+        });
+        $('table tbody').on('click', 'button.xuat', function () {
+            //function convertDate(inputFormat) {
+            //    function pad(s) { return (s < 10) ? '0' + s : s; }
+            //    var d = new Date(inputFormat);
+            //    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/');
+            //}
+            //var temp = $('#datepicker').val();
+              var thang = $('#thang').val();
+            var nam = $('#nam').val();
+            var date1 = thang + '_' + nam;
+ 
+                //var dateloc = convertDate($('#datepicker').val());
+                var mahs = $(this).closest('tr').find('input[name="mahs"]').val();
+                //var vcl = mahs + dateloc;
+                var redirectWindow = window.open('@Url.Action("PrintReportMonth", "DANH_GIA_THEO_THANG")?id=' + mahs + '&date='+date1, '_blank');
+                redirectWindow.location;
+                //location.href = ;
+                //$.ajax({
+                //    type: 'GET',
+                //    url: '/DANH_GIA_THEO_THANG/PrintReport',
+                //    dataType: 'JSON',
+                //    traditional: true,
+                //    data: {
+                //        id: vcl,
+                //        date: temp
+                //    },
+                //    contentType: "application/json; chartset=utf-8",
+                //    success: function (respose) {
+
+                //    }
+                //});
+
+        });
+    </script>
+}
+

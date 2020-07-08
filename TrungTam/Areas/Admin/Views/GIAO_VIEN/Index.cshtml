@@ -1,0 +1,218 @@
+﻿@model IEnumerable<TrungTam.Areas.Admin.Models.GIAO_VIEN>
+@*@model PagedList.IPagedList<TrungTam.Areas.Admin.Models.GIAO_VIEN>*@
+@*@using PagedList.Mvc;*@
+@{
+    ViewBag.Title = "Index";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+<style>
+    /*.my-custom-scrollbar {
+        position: relative;
+        height: 200px;
+        overflow: auto;
+    }
+
+    .table-wrapper-scroll-y {
+        display: block;
+    }*/
+    table.dataTable thead .sorting:after,
+    table.dataTable thead .sorting:before,
+    table.dataTable thead .sorting_asc:after,
+    table.dataTable thead .sorting_asc:before,
+    table.dataTable thead .sorting_asc_disabled:after,
+    table.dataTable thead .sorting_asc_disabled:before,
+    table.dataTable thead .sorting_desc:after,
+    table.dataTable thead .sorting_desc:before,
+    table.dataTable thead .sorting_desc_disabled:after,
+    table.dataTable thead .sorting_desc_disabled:before {
+        bottom: .5em;
+    }
+</style>
+<h2 class="Title_Content">Danh Sách Giáo Viên</h2>
+<button type="button" class="btn btn-primary mt-5" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus-square mr-2"></i>Thêm giáo viên</button>
+
+<div class="card-body">
+    @*<div class="row mb-3">
+        <div class="col">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Tên giáo viên" id="searchName">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="btnTimNV"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+    <table id="dtVerticalScrollExample" class="table table-bordered table-responsive table-hover myTable">
+        <thead class="text-white text-center">
+            <tr class="bg-primary">
+                <th>Họ và tên giáo viên</th>
+                <th>
+                    Ngày sinh
+                    <i class="fa fa-arrow-up" id="SapXepTang"></i>
+                    <i class="fa fa-arrow-down" id="SapXepGiam"></i>
+                </th>
+                <th>Giới tính</th>
+                <th>Email</th>
+                <th>Số ĐT</th>
+                <th><em class="fa fa-cog"></em></th>
+            </tr>
+        </thead>
+        <tbody id="tableDanhSach" class="text-center">
+            @foreach (var item in Model)
+            {
+            
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HO_TEN)
+                    </td>
+                    <td>
+                        @item.NG_SINH.Value.ToShortDateString()
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GIOI_TINH)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EMAIL)
+                    </td>
+                    <td>
+                        @item.SDT.Trim()
+                    </td>
+                    <td>
+                        <a id="btnCapNhatNV" class="btn btn-warning text-white" href="~/Admin/GIAO_VIEN/Edit/@item.MA_GV">
+                            Sửa
+                        </a>
+                        @*<input type="submit" class="btn btn-danger" value="Xóa" onclick="return confirm('Bạn chắc chắn muốn xóa phần tử này ?');" />*@
+                        <a class="btn btn-success text-white" href="~/Admin/GIAO_VIEN/ResetPass/@item.MA_GV" onclick="return confirm('Bạn chắc chắn muốn reset mật khẩu giáo viên này ?');">
+                            Reset Pass
+                        </a>
+                        <a class="btn btn-danger text-white" href="~/Admin/GIAO_VIEN/Delete/@item.MA_GV" onclick="return confirm('Bạn chắc chắn muốn xóa giáo viên này ?');">
+                            Xoá
+                        </a>
+                    </td>
+                </tr>
+             
+            }
+        </tbody>
+    </table>
+    @*@Html.PagedListPager(Model, page => Url.Action("Index", new { page}))*@
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title title_TieuDe" id="exampleModalLabel">Thêm Giáo Viên</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form role="form" action="/GIAO_VIEN/Create" method="post" onsubmit="return themGV()">
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                            </div>
+                            <input type="text" name="name" id="name" class="form-control input-sm" placeholder="Họ và tên">
+                        </div>
+                        <span class="sp-thongbao" id="tbTen"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                            </div>
+                            <input type="email" name="email" id="email" class="form-control input-sm" placeholder="Email">
+                        </div>
+
+                        <span class="sp-thongbao" id="tbEmail"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                            </div>
+                            <input type="tel" name="SDT" id="sdt" class="form-control input-sm" placeholder="Số ĐT">
+                        </div>
+                        <span class="sp-thongbao" id="tbsdt"></span>
+                    </div>
+                  
+
+                    <div class="input-group form-group mb-3">
+                        <div class="input-group-prepend" for="gioitinh">
+                            <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                        </div>
+                        <select class="custom-select" name="gioitinh">
+                            <option selected>Chọn giới tính...</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+
+                        </select>
+                        <span class="sp-thongbao" id="tbgioitinh"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            <input type="date" name="ngaysinh" id="datepicker" class="form-control" placeholder="Ngày Sinh">
+                        </div>
+
+                        <span class="sp-thongbao" id="tbNgay"></span>
+                    </div>
+                </div>
+                <div class="modal-footer" id="modal-footer">
+                    <button id="btnThemNV" type="submit" class="btn btn-primary">Thêm giáo viên</button>
+                    <button id="btnDong" type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                </div>
+            </form>
+        </div>
+        <!-- Modal footer -->
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#dtVerticalScrollExample').DataTable({
+            //"scrollY": "200px",
+            //"scrollCollapse": true,
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+</script>
+<section>
+    <script>
+        $('#sdt').blur(function () {
+            var sdt = $('#sdt').val();
+            if (sdt != "") {
+                $.ajax({
+                    url: "/GIAO_VIEN/checkTaiKhoan",
+                    data: { id: sdt },
+                    dataType: "Json",
+                    type: "GET",
+                    success: function (response) {
+                        if (response == "1") {
+                            bootbox.alert("SDT này đã tồn tại!, Vui lòng đổi số khác hoặc thêm KÝ TỰ phân biệt ở cuối!");
+                        }
+                    }
+                });
+            }
+            else {
+                bootbox.alert("Không được để trống SDT!");
+            }
+        });
+    </script>
+</section>

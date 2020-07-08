@@ -1,0 +1,114 @@
+﻿@model TrungTam.Areas.Admin.Models.BANG_LUONG
+
+@{
+    ViewBag.Title = "Edit";
+    var id = Session["ID"];
+    if (id.ToString().First().Equals('9'))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_layout_vanphong.cshtml";
+    }
+}
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal myContent m-0 p-3">
+    <h2 class="Title_Content">CẬP NHẬT BẢNG LƯƠNG</h2>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.TRANG_THAI)
+    @Html.HiddenFor(model => model.MA_LOAI_LUONG)
+    <div class="form-group">
+        <div class="row m-3">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-chalkboard-teacher mr-2"></i>Tên Loại</span></div>
+            <div class="col-md-7 col-lg-6">
+                @Html.EditorFor(model => model.TEN_LOAI, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TEN_LOAI, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    @*<div class="form-group">
+            <div class="control-label col-md-2">
+                Tên Loại
+            </div>
+            <div class="col-md-10">
+
+            </div>
+        </div>*@
+    @if (Model.SO_LUONG_MIN != 0 && Model.SO_LUONG_MAX != 0)
+    {
+        <div class="form-group">
+            <div class="row m-3">
+                <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-chalkboard-teacher mr-2"></i>Sỉ số nhỏ</span></div>
+                <div class="col-md-7 col-lg-6">
+                    @Html.EditorFor(model => model.SO_LUONG_MIN, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.SO_LUONG_MIN, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+
+
+
+        </div>
+        <div class="form-group">
+
+            <div class="row m-3">
+                <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-chalkboard-teacher mr-2"></i>Sỉ số lớn</span></div>
+
+                <div class="col-md-7 col-lg-6">
+
+                    @Html.EditorFor(model => model.SO_LUONG_MAX, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.SO_LUONG_MAX, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+
+
+        </div>
+    }
+    else
+    {
+        @Html.HiddenFor(model => model.SO_LUONG_MIN)
+        @Html.HiddenFor(model => model.SO_LUONG_MAX)
+    }
+    <div class="form-group">
+        <div class="row m-3">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-chalkboard-teacher mr-2"></i>Đơn giá</span></div>
+
+            <div class="col-md-7 col-lg-6">
+
+                @Html.EditorFor(model => model.DON_GIA, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DON_GIA, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+    </div>
+    @*<div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @Html.ActionLink("Quay Lại", "Index")
+                <input type="submit" class="btn btn-success" value="Lưu" />
+            </div>
+        </div>*@
+    <div class="form-group">
+        <div class="row m-3">
+            <div class="col-sm-2 col-md-1 col-lg-2"></div>
+            <div class="col-sm-4 col-md-4 col-lg-3">@Html.ActionLink("Back to List", "Index")</div>
+            <div class="col-sm-8 col-md-7 col-lg-6 ">
+                <button type="submit" value="Save" class="btn btn-primary w-50"><i class="fa fa-save mr-2"></i>Save</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+    }

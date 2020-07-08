@@ -1,0 +1,205 @@
+﻿@model TrungTam.Areas.Admin.Models.HOC_SINH
+@{
+    ViewBag.Title = "Edit";
+    var id = Session["ID"];
+
+    Layout = "~/Views/Shared/_layout.cshtml";
+
+}
+<marquee class=" p-3 text-danger "><h3 id="thongbaohocphi">------- Chúc bạn một ngày học tập thật năng động và sáng tạo -------</h3></marquee>
+<div class="container">
+
+    <form id="exampleModal1" role="form" action="/Home_User/EditHS" method="post" onsubmit="return themHV()">
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal myContent m-0 p-3" role="dialog">
+            <h2 class="Title_Content">Cập Nhật Học Viên</h2>
+            <h4 class="title_TieuDe">Học Viên</h4>
+            <hr />
+            <input type="hidden" name="mahs" value="@Model.MA_HS" />
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Họ Tên</span></div>
+                    <div class="col-md-7 col-lg-6">
+                        <input type="text" name="name" id="name" value="@Model.HO_TEN" class="form-control input-sm" />
+                    </div>
+                    <span class="sp-thongbao" id="tbTen"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-calendar mr-2"></i>Ngày Sinh</span></div>
+                    <div class="col-md-7 col-lg-6">
+                        <input type="text" name="ngaysinh" id="datepicker" value="@Model.NG_SINH.ToShortDateString()" class="form-control" />
+                    </div>
+                    <span class="sp-thongbao" id="tbNgay"></span>
+                </div>
+            </div>
+            <div class="form-group" style="display:none">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-school"></i>Ngày Sinh</span></div>
+                    <div class="col-md-7 col-lg-6">
+                        <input type="hidden" name="tinhtrang" value="@Model.TINH_TRANG" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-transgender-alt mr-2"></i>Giới Tính</span></div>
+                    <div class="col-md-7 col-lg-6">
+                        <select class="form-control" name="gioitinh">
+                            @if (Model.GIOI_TINH == "Nam")
+                            {
+                                <option selected>Nam</option>
+                                <option>Nữ</option>
+                            }
+                            else
+                            {
+                                <option>Nam</option>
+                                <option selected>Nữ</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-7 col-lg-6">
+                        <input type="hidden" name="ngaynhaphoc" id="datepicker" value="@Model.NG_VAO_HOC" class="form-control input-sm" />
+                    </div>
+                    <span class="sp-thongbao" id="tbNgay"></span>
+                </div>
+            </div>
+            <div class="form-group">
+
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-cog mr-2"></i> khối</span></div>
+                    <div class="col-md-7 col-lg-6">
+                        <input type="number" name="khoi" id="khoi" value="@Model.KHOI" class="form-control input-sm" min="1" max="12" />
+                    </div>
+                    <span class="sp-thongbao" id="tbkhoi"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-building mr-2"></i>Trường</span></div>
+                    <div class="col-md-7 col-lg-6">
+                        <input type="text" name="truong" id="truong" value="@Model.TRUONG" class="form-control input-sm" />
+                    </div>
+                    <span class="sp-thongbao" id="tbtruong"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-gift mr-2"></i>Môn đăng kí</span></div>
+                    <div class="col-md-7 col-lg-6">
+                        <input type="text" name="mondk" id="mondk" value="@Model.MON_DK" class="form-control input-sm" />
+                    </div>
+                    <span class="sp-thongbao" id="tbmondk"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-phone mr-2"></i>Số Điện Thoại</span></div>
+                    <div class="col-md-7 col-lg-6">
+                        <input type="tel" name="sdt" id="sdt" value="@Model.SDT.Trim()" class="form-control input-sm" />
+                    </div>
+                    <span class="sp-thongbao" id="tbSDT"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-address-card mr-2"></i>Địa chỉ</span></div>
+                    <div class="col-md-7 col-lg-6">
+                        <input type="text" name="diachi" id="diachi" value="@Model.DIA_CHI" class="form-control input-sm" />
+                    </div>
+                    <span class="sp-thongbao" id="tbdiachi"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-user mr-2"></i>Phụ huynh</span></div>
+                    <div class="col-md-7 col-lg-6">
+                        <input type="tel" name="phuhuynh" id="phuhuynh" value="@Model.PHU_HUYNH" class="form-control input-sm" />
+                    </div>
+                    <span class="sp-thongbao" id="tbphuhuynh"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-md-4 col-sm-4 col-lg-3"><span><i class="fa fa-phone mr-2"></i></i>SDT Phụ huynh</span></div>
+                    <div class="col-md-7 col-lg-6">
+                        <input type="tel" name="sdt_ph" id="sdt_ph" value="@Model.SDT_PH.Trim()" class="form-control input-sm" />
+                    </div>
+                    <span class="sp-thongbao" id="tbSDT_ph"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-2 col-md-1 col-lg-2"></div>
+                    <div class="col-sm-4 col-md-4 col-lg-3"></div>
+                    <div class="col-sm-8 col-md-7 col-lg-6">
+                        <button id="btnThemNV" type="submit" value="Save" class="btn btn-primary w-50"><i class="fa fa-save mr-2"></i>Save</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    $('#exampleModal1').validate({
+        rules: {
+            tel: {
+                required: true,
+                number: true, //  bắt buộc là kiểu số
+                digits: true,  // không được tồn tại số âm
+            }
+        },
+        messages: {
+            required: "Xin vui lòng nhập số điện thoại !",
+            number: "Số điện thoại bắt buộc là kiểu số !",
+            digits: "Số điện thoại không được nhập số âm !"
+        }
+    });
+</script>
+<section>
+    <script>
+        function confirmAction() {
+            return confirm("Bạn chắc chắn muốn chỉnh sửa thông tin này?")
+        }
+    </script>
+</section>
+<section>
+    <script>
+        window.onload = function () {
+            $.ajax({
+                url: "/Home_User/nhacnhohocphi",
+                data: { id: 1 },
+                dataType: "Json",
+                type: "GET",
+                success: function (response) {
+                    if (response != 0) {
+                        $(response).each
+                            (
+                                $("#thongbaohocphi").html("---- Bạn chưa thanh toán học phí tháng này : " + response + " vnđ ----")
+                            );
+                    }
+                }
+            });
+        }
+    </script>
+</section>

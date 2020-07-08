@@ -1,0 +1,154 @@
+﻿@{
+    var noidung = (List<TrungTam.Areas.Admin.Models.TRANG_CHU>)ViewBag.noidung;
+}
+<header class="  header">
+
+    <!--navbar-expand-md   giới hạn  khi xuất hiện nút  -->
+    <!-- bg-dark màu -->
+    <div class="container mynav">
+        <nav class="row navbar navbar-expand-lg navbar-line bg-line ">
+            <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+            <div class="col-sm-4 col-md-4 col-lg-3 col-5 "> <a href="#"><img src="~/Asset/admin/img/unnamed.png" class="w-100 h-100"></a> </div>
+            <button class="navbar-toggler btn_menu p-2" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+            </button>
+            <div class="col-6 ml-5 collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href='~/Admin/Home_User/Thoikhoabieu'>Thời Khóa Biểu</a>
+                    </li>
+                    <li class="nav-item" id="gv">
+                        <a class='nav-link' href='~/Admin/BUOI_HOC/GV'>Đánh Giá Buổi Học</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class='nav-link' href='~/Admin/DANH_GIA_CUOI_THANG/Index'>Đánh Giá Cuối Tháng</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="~/Admin/TAILIEUx/Index">Tài liệu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="~/Home/Logout">Đăng xuất</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-6 col-md-3 col-sm-4 col-lg-2  ">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Hello @Session["name"]</span>
+                    <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+                </a>
+                <!-- Dropdown - User Information -->
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="" data-toggle="modal" data-target="#exampleModalScrollable">
+                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Đổi mật khẩu
+                    </a>
+                    <a class="dropdown-item" href="~/Home/Logout">
+                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Đăng xuất
+                    </a>
+                    <div class="dropdown-divider"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+</header>
+<!-- Button trigger modal -->
+<!-- carousel -->
+<section class=" myCarousel">
+    <div id="demo" class="carousel carousel-fade slide " data-ride="carousel" data-interval="2000">
+
+        <!-- Indicatorsô vuông nhỏ -->
+        <ul class="carousel-indicators">
+            <li data-target="#demo" data-slide-to="0" class="active"></li>
+            <li data-target="#demo" data-slide-to="1"></li>
+            <li data-target="#demo" data-slide-to="2"></li>
+        </ul>
+
+        <!-- The slideshow -->
+        <div class="carousel-inner col-12 col-sm-12 col-md-12">
+            <div class="carousel-item active">
+                <img src="~/Asset/admin/img/ca11.jpg" class="img-fluid w-100" alt="Los Angeles">
+                <div class="carousel_overlay"></div>
+                <div class=" carousel_caption">
+                    <p>ACTION, ADVENTURE, FANTASY</p>
+                    <h1 class="display-5">TRUNG TÂM KHOA HỌC TRẢI NGHIỆM</h1>
+                    <p>
+                        Chúng tôi không cho bạn kiến thức,
+                        Chúng tôi cho bạn khả năng gặt lấy chúng.
+                        Vì bạn là chính bạn!
+                    </p>
+
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="~/Asset/admin/img/ca12.jpg" class="img-fluid w-100" alt="Chicago">
+                <div class="carousel_overlay"></div>
+                <div class=" carousel_caption">
+                    <p>ACTION, ADVENTURE, FANTASY</p>
+                    <h1 class="display-5">TRUNG TÂM KHOA HỌC TRẢI NGHIỆM</h1>
+                    <p>
+                        Chúng tôi không cho bạn kiến thức,
+                        Chúng tôi cho bạn khả năng gặt lấy chúng.
+                        Vì bạn là chính bạn!
+                    </p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="~/Asset/admin/img/ca13.jpg" class="img-fluid w-100" alt="New York">
+                <div class="carousel_overlay"></div>
+                <div class=" carousel_caption">
+                    <p>ACTION, ADVENTURE, FANTASY</p>
+                    <h1 class="display-5">TRUNG TÂM KHOA HỌC TRẢI NGHIỆM</h1>
+                    <p>
+                        Chúng tôi không cho bạn kiến thức,
+                        Chúng tôi cho bạn khả năng gặt lấy chúng.
+                        Vì bạn là chính bạn!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<form action="~/Home_User/DoiMatKhau" method="post" onSubmit="return confirmAction()">
+    <div class="modal fade " id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content ">
+                <div class="modal-header mymodal pb-0">
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title pb-3" id="exampleModalScrollableTitle">Đổi mật khẩu</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <label class="form-control mymodal">@Session["Name"]</label>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" name="pass" class="form-control mymodal" placeholder="Mật khẩu mới" />
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" name="pass_again" class="form-control mymodal" placeholder="xác nhận mật khẩu" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="ok" type="submit" class="btn btn-primary  btnXT w-100">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<section>
+    <script>
+        function confirmAction() {
+            return confirm("Bạn chắc chắn muốn đổi mật khẩu?")
+        }
+    </script>
+</section>
+<script>
+    $('.carousel').carousel({
+        interval: 9000
+    })
+</script>
